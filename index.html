@@ -5,11 +5,11 @@
 <title>Ancestry Composition — Research Prototype</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-:root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:34px;--chevron-right:9px}
+:root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:38px;--chevron-right:12px}
 *{box-sizing:border-box; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
 html,body{margin:0;background:#eceff2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
 body{display:flex;justify-content:center}
-.app{width:min(100%,432px);min-height:100vh;background:#fff;overflow:hidden;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
+.app{width:min(100%,390px);min-height:100vh;background:#fff;overflow:hidden;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
 .topbar{height:67px;position:relative;background:linear-gradient(#f4f5fa,#e8edf2);overflow:hidden}.topbar:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 145px 48px at 30% 104%,rgba(255,255,255,.94) 0 55%,transparent 56%),radial-gradient(ellipse 120px 48px at 86% 100%,rgba(255,255,255,.52) 0 52%,transparent 53%)}
 .nav{position:relative;z-index:1;height:67px;display:grid;grid-template-columns:49px 1fr 111px;align-items:center;gap:8px;padding:7px 17px 7px 18px}.circle,.capsule{border:1px solid rgba(255,255,255,.96);background:rgba(255,255,255,.88);box-shadow:0 2px 5px rgba(0,0,0,.09)}.circle{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer}.capsule{height:49px;border-radius:26px;display:grid;grid-template-columns:1fr 1fr}.capsule button{border:0;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}.page-title{font-size:20px;line-height:1;font-weight:600;text-align:center;white-space:nowrap;letter-spacing:-.4px}.circle svg{width:29px;height:29px}.capsule svg{width:27px;height:27px}
 
@@ -21,12 +21,12 @@ body{display:flex;justify-content:center}
 .total{position:absolute;right:var(--value-right);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:8px;white-space:nowrap;z-index:2}
 
 /* Band typography */
-.band{min-height:40px;padding:0 121px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.band{min-height:40px;padding:0 125px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
 
 /* Row typography and tight hierarchy indentation */
-.row{position:relative;min-height:46px;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:4px;align-items:center;}
-.row.level-1 { padding: 0 106px 0 14px; }
-.row.level-2 { padding: 0 106px 0 37px; }
+.row{position:relative;min-height:46px;display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:4px;align-items:center;}
+.row.level-1 { padding: 0 110px 0 14px; }
+.row.level-2 { padding: 0 110px 0 37px; }
 
 .detail{position:relative;padding-top:12px;padding-bottom:12px;padding-right:15px;}
 .detail.level-1 { padding-left: 14px; }
@@ -35,13 +35,13 @@ body{display:flex;justify-content:center}
 .row.level-1:after, .detail.level-1:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:15px; }
 .row.level-2:after, .detail.level-2:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:38px; }
 
-.dot{width:14px;height:14px;border-radius:50%;justify-self:start;margin-left:3px}
+.dot{width:11px;height:11px;border-radius:50%;justify-self:start;margin-left:3px}
 .label,.pct{font-size:17px;line-height:1.2;font-weight:500;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-variant-numeric:tabular-nums;text-align:right}
 .chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
-.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}.detail-head .dot{margin-left:2px}
+.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:110px}.detail-head .dot{margin-left:2px}
 
 /* Region Layout */
-.places{padding:8px 0 0 38px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
+.places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
 .places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
 
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
@@ -50,7 +50,7 @@ body{display:flex;justify-content:center}
 #results section:active {cursor: grabbing;}
 #results section.over {border-top: 2px dashed #000; border-bottom: 2px dashed #000; opacity: 0.7;}
 #results {cursor: pointer;} 
-@media(max-width:390px){:root{--value-right:32px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
+@media(max-width:380px){:root{--value-right:34px;--chevron-right:10px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
 <main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
 <section class="profile">
