@@ -3,33 +3,41 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ancestry Composition — Research Prototype</title>
-<!-- Include html2canvas for high-res image exporting -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:34px;--chevron-right:9px}
-/* Added font-smoothing for higher quality, native-like text rendering */
-*{box-sizing:border-box;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-html,body{margin:0;background:#eceff2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}body{display:flex;justify-content:center}.app{width:min(100%,432px);min-height:100vh;background:#fff;overflow:hidden;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
+*{box-sizing:border-box; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+html,body{margin:0;background:#eceff2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
+body{display:flex;justify-content:center}
+.app{width:min(100%,432px);min-height:100vh;background:#fff;overflow:hidden;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
 .topbar{height:67px;position:relative;background:linear-gradient(#f4f5fa,#e8edf2);overflow:hidden}.topbar:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 145px 48px at 30% 104%,rgba(255,255,255,.94) 0 55%,transparent 56%),radial-gradient(ellipse 120px 48px at 86% 100%,rgba(255,255,255,.52) 0 52%,transparent 53%)}
-.nav{position:relative;z-index:1;height:67px;display:grid;grid-template-columns:49px 1fr 111px;align-items:center;gap:8px;padding:7px 17px 7px 18px}.circle,.capsule{border:1px solid rgba(255,255,255,.96);background:rgba(255,255,255,.88);box-shadow:0 2px 5px rgba(0,0,0,.09)}.circle{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;padding:0}.capsule{height:49px;border-radius:26px;display:grid;grid-template-columns:1fr 1fr}.capsule button{border:0;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}.page-title{font-size:20px;line-height:1;font-weight:600;text-align:center;white-space:nowrap;letter-spacing:-.4px}.circle svg{width:29px;height:29px}.capsule svg{width:27px;height:27px}
-.profile{height:80px;position:relative}.handle{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:37px;height:3px;border-radius:4px;background:#e5e5e5}.pie{position:absolute;left:9px;top:-11px;width:81px;height:81px;border-radius:50%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}.pie svg{width:100%;height:100%;display:block}.profile-copy{height:100%;padding:20px 116px 0 155px;display:flex;align-items:center;font-size:20px;font-weight:700;letter-spacing:-.42px;position:relative}.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.total,.band .value,.pct{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}.total{position:absolute;right:var(--value-right);top:50%;transform:translateY(-18%);width:72px}
-.band{min-height:40px;padding:0 121px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:600;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-weight:700}
-.row{position:relative;min-height:49px;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:4px;align-items:center;padding:0 106px 0 14px}.row:after,.detail:after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:1px;background:var(--hair)}.dot{width:14px;height:14px;border-radius:50%;justify-self:start;margin-left:3px}.label,.pct{font-size:18px;line-height:1.2;font-weight:400;letter-spacing:-.2px}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px}.chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:16px}
-/* Modified detail padding and width to mathematically align chevrons perfectly */
-.detail{position:relative;padding:14px 0 12px 37px}
-.detail-head{position:relative;width:100%;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}
-.detail-head .dot{margin-left:2px}.places{padding:11px 15px 0 38px;font-size:14px;line-height:1.55;letter-spacing:-.12px;color:#1c1c1e}.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}.detail.compact{min-height:49px;padding-top:0;padding-bottom:0;display:flex;align-items:center}.detail.compact .detail-head{width:100%}
+.nav{position:relative;z-index:1;height:67px;display:grid;grid-template-columns:49px 1fr 111px;align-items:center;gap:8px;padding:7px 17px 7px 18px}.circle,.capsule{border:1px solid rgba(255,255,255,.96);background:rgba(255,255,255,.88);box-shadow:0 2px 5px rgba(0,0,0,.09)}.circle{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer}.capsule{height:49px;border-radius:26px;display:grid;grid-template-columns:1fr 1fr}.capsule button{border:0;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}.page-title{font-size:20px;line-height:1;font-weight:600;text-align:center;white-space:nowrap;letter-spacing:-.4px}.circle svg{width:29px;height:29px}.capsule svg{width:27px;height:27px}
+
+/* Profile Section Adjustments - All text 17px */
+.profile{height:80px;position:relative}.handle{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:37px;height:3px;border-radius:4px;background:#e5e5e5}.pie{position:absolute;left:9px;top:-11px;width:81px;height:81px;border-radius:50%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}.pie svg{width:100%;height:100%;display:block}
+.profile-copy{height:100%;padding:20px 116px 0 155px;display:flex;align-items:center;font-size:17px;font-weight:700;letter-spacing:-.42px;position:relative}.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.total,.band .value,.pct{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.total{position:absolute;right:var(--value-right);top:50%;transform:translateY(-18%);width:72px;font-size:17px;font-weight:700}
+
+/* Band typography - 17px Bold */
+.band{min-height:40px;padding:0 121px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700}
+
+/* Row typography - 17px Regular */
+.row{position:relative;min-height:49px;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:4px;align-items:center;padding:0 106px 0 14px}.row:after,.detail:after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:1px;background:var(--hair)}.dot{width:14px;height:14px;border-radius:50%;justify-self:start;margin-left:3px}
+.label,.pct{font-size:17px;line-height:1.2;font-weight:400;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px}
+.chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
+.detail{position:relative;padding:14px 15px 12px 37px}.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}.detail-head .dot{margin-left:2px}.places{padding:11px 0 0 38px;font-size:14px;line-height:1.55;letter-spacing:-.12px;color:#1c1c1e}.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}.detail.compact{min-height:49px;padding-top:0;padding-bottom:0;display:flex;align-items:center}.detail.compact .detail-head{width:calc(100% + 15px)}
+
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
-.panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px;cursor:grab;transition:all .15s ease}.editor-card:active{cursor:grabbing}.editor-card.over{border:2px dashed #7eb4e6;background:#f0f7ff}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
-/* Drag and Drop main styles */
+.panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
 #results section {cursor: grab; transition: opacity 0.2s ease;}
 #results section:active {cursor: grabbing;}
 #results section.over {border-top: 2px dashed #000; border-bottom: 2px dashed #000; opacity: 0.7;}
-#results {cursor: pointer;} /* Indicates sections are clickable for edit */
-@media(max-width:390px){:root{--value-right:32px}.page-title{font-size:19px}.profile-copy{padding-left:136px;padding-right:116px;font-size:18px}.band{font-size:16px}.label,.pct{font-size:17px}}
+#results {cursor: pointer;} 
+@media(max-width:390px){:root{--value-right:32px}.page-title{font-size:18px}.profile-copy{padding-left:136px;padding-right:116px;font-size:17px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
 <main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
-<section class="profile"><div class="handle"></div><div class="pie"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#fff"/><g id="pieSegments" transform="rotate(-90 50 50)"></g><circle cx="50" cy="50" r="22" fill="#f8f8f9" stroke="#eee"/><circle cx="50" cy="50" r="27" fill="none" stroke="#7666df" stroke-opacity=".36" stroke-width="8"/><text id="initials" x="50" y="57" text-anchor="middle" font-weight="500" font-size="21" fill="#737373">ML</text></svg></div><div class="profile-copy"><span class="name" id="nameOut"></span><span class="total">100%</span></div></section>
+<section class="profile"><div class="handle"></div><div class="pie"><svg viewBox="0 0 100 100" shape-rendering="geometricPrecision"><circle cx="50" cy="50" r="49" fill="#fff"/><g id="pieSegments" transform="rotate(-90 50 50)"></g><circle cx="50" cy="50" r="22" fill="#f8f8f9" stroke="#eee"/><circle cx="50" cy="50" r="27" fill="none" stroke="#7666df" stroke-opacity=".36" stroke-width="8"/><text id="initials" x="50" y="57" text-anchor="middle" font-weight="500" font-size="21" fill="#737373">ML</text></svg></div><div class="profile-copy"><span class="name" id="nameOut"></span><span class="total">100%</span></div></section>
 <div id="results" title="Click anywhere to edit results"></div></main>
 <button class="prototype-mark" id="openPanel">RESEARCH PROTOTYPE · NOT 23ANDME</button>
 <aside class="panel" id="panel"><div class="panel-head"><h2>Customize ancestry results</h2><button id="close">Close</button></div><div class="panel-body"><div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div><div id="editorList" class="editor-list"></div><button class="add-btn" id="addGroup">+ Add ancestry group</button><button class="apply-btn" id="apply">Apply changes</button><p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line. Colors are assigned automatically from the selected population. The visible palette has been calibrated against the supplied iPhone capture and additional official 23andMe mobile/marketing screenshots. This independent research prototype remains visibly labeled and is not affiliated with 23andMe.</p></div></aside>
@@ -44,56 +52,82 @@ const CATALOG={
 "Western Asian & North African":{band:"#9280f8",text:"#fff",groups:{"Arab, Egyptian & Levantine":"#6d58df","Coptic Egyptian":"#5e49d2","Egyptian":"#755fe5","Levantine":"#826cea","Peninsular Arab":"#8f79ee","North African":"#6b51c9","Northern West Asian":"#4943a6","Anatolian":"#5948cf","Cypriot":"#6150d8","Iranian, Caucasian & Mesopotamian":"#5e52e2","Broadly Western Asian & North African":"#7768eb"}},
 "Melanesian":{band:"#6bd5e8",text:"#173237",groups:{"Melanesian":"#25b8d3"}}
 };
+// Default configured explicitly to match the screenshot NWA/ICM tests
 const DEFAULT=[
-{top:"European",group:"Central & Eastern European",pct:99.4,level:1,regions:[]},
-{top:"European",group:"Lithuanian",pct:87.2,level:2,regions:["Aukštaitija","Nevėžis River Basin","+ 16 regions"]},
-{top:"European",group:"Latvian",pct:9.5,level:2,regions:["Vidzeme and Semigallia","Courland","+ 3 regions"]},
-{top:"European",group:"Czech, Hungarian, Slovak & Southern Polish",pct:2.7,level:2,regions:[]},
-{top:"European",group:"Italian & Maltese",pct:0.3,level:1,regions:[]},
-{top:"European",group:"Sardinian",pct:0.3,level:2,regions:[]},
-{top:"European",group:"Ashkenazi Jewish",pct:0.1,level:1,regions:[]}
+{top:"Western Asian & North African",group:"Northern West Asian",pct:100,level:1,regions:[]},
+{top:"Western Asian & North African",group:"Iranian, Caucasian & Mesopotamian",pct:100,level:2,regions:["Lori Province, Armenia","Imereti, Georgia","+ 8 regions"]}
 ];
 let state={name:"Mindaugas Linkevicius",initials:"ML",items:structuredClone(DEFAULT)};
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=n=>`${Number(n||0).toFixed(1)}%`;
-function topTotals(){const out={};for(const i of state.items) if(i.level===1) out[i.top]=(out[i.top]||0)+Number(i.pct||0);return out}
-function render(){
- $('#nameOut').textContent=state.name;$('#initials').textContent=state.initials;const totals=topTotals();let html='';
- const orderedTops = [...new Set(state.items.map(x=>x.top))];
- for(const top of orderedTops){
-   const rows=state.items.filter(x=>x.top===top);
-   if(!rows.length)continue;
-   const meta=CATALOG[top];
-   html+=`<section draggable="true" data-top="${esc(top)}"><div class="band" style="background:${meta.band};color:${meta.text}"><span class="title">${esc(top)}</span><span class="value">${fmt(totals[top]||rows.reduce((a,b)=>a+Number(b.pct||0),0))}</span></div>`;
-   for(const r of rows){const color=meta.groups[r.group]||Object.values(meta.groups)[0];const chev='<svg class="chev" viewBox="0 0 9 16" fill="none" stroke="var(--chev)" stroke-width="3" stroke-linecap="round"><path d="m2 2 5 6-5 6"/></svg>';if(r.level===1&&!r.regions.length){html+=`<div class="row"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>`}else{html+=`<div class="detail${r.regions.length?'':' compact'}"><div class="detail-head"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>${r.regions.length?`<div class="places">${r.regions.map((v,idx)=>{const p=v.split(',');return `<p>${idx<2&&p.length>1?`<strong>${esc(p[0])}</strong>,${esc(p.slice(1).join(','))}`:esc(v)}</p>`}).join('')}</div>`:''}</div>`}}
-   html+='</section>'}$('#results').innerHTML=html;renderPie(totals)
 
-   // Bind drag and drop events to the generated sections
-   document.querySelectorAll('#results section').forEach(sec => {
-     const top = sec.dataset.top;
-     sec.ondragstart = e => { e.dataTransfer.setData('text/plain', top); sec.style.opacity = '0.5'; };
-     sec.ondragover = e => { e.preventDefault(); sec.classList.add('over'); };
-     sec.ondragleave = e => { sec.classList.remove('over'); };
-     sec.ondrop = e => {
-       e.preventDefault();
-       sec.classList.remove('over');
-       const draggedTop = e.dataTransfer.getData('text/plain');
-       if(draggedTop && draggedTop !== top) {
-         const draggedItems = state.items.filter(x => x.top === draggedTop);
-         state.items = state.items.filter(x => x.top !== draggedTop);
-         const insertIdx = state.items.findIndex(x => x.top === top);
-         if(insertIdx >= 0) state.items.splice(insertIdx, 0, ...draggedItems);
-         else state.items.push(...draggedItems);
-         render();
+function render(){
+ $('#nameOut').textContent=state.name;
+ $('#initials').textContent=state.initials;
+ let html='';
+ const pieTotals = {};
+ const orderedTops = [...new Set(state.items.map(x=>x.top))];
+ 
+ for(const top of orderedTops){
+   const rows = state.items.filter(x=>x.top===top);
+   if(!rows.length)continue;
+   const meta = CATALOG[top];
+   
+   // BUG FIX: Strictly parse integer for level to ensure no string vs int fallback issues.
+   const level1Rows = rows.filter(r => parseInt(r.level, 10) === 1);
+   let bandTotal = 0;
+   
+   if (level1Rows.length > 0) {
+       // Only sum the exact matches for Parent rows (Level 1)
+       bandTotal = level1Rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
+   } else {
+       // Only execute if user manually deleted ALL Level 1 rows for a category
+       bandTotal = rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
+   }
+   pieTotals[top] = bandTotal;
+
+   html+=`<section draggable="true" data-top="${esc(top)}"><div class="band" style="background:${meta.band};color:${meta.text}"><span class="title">${esc(top)}</span><span class="value">${fmt(bandTotal)}</span></div>`;
+   for(const r of rows){
+       const color=meta.groups[r.group]||Object.values(meta.groups)[0];
+       const chev='<svg class="chev" viewBox="0 0 8 14" fill="none" stroke="#c7c7cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>';
+       
+       if(parseInt(r.level, 10)===1 && !r.regions.length){
+           html+=`<div class="row"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>`
+       } else {
+           html+=`<div class="detail${r.regions.length?'':' compact'}"><div class="detail-head"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>${r.regions.length?`<div class="places">${r.regions.map((v,idx)=>{const p=v.split(',');return `<p>${idx<2&&p.length>1?`<strong>${esc(p[0])}</strong>,${esc(p.slice(1).join(','))}`:esc(v)}</p>`}).join('')}</div>`:''}</div>`
        }
-     };
-     sec.ondragend = () => { sec.style.opacity = '1'; document.querySelectorAll('#results section').forEach(s => s.classList.remove('over')); };
-   });
+   }
+   html+='</section>'
+ }
+ $('#results').innerHTML=html;
+ renderPie(pieTotals);
+
+ // Bind drag and drop events
+ document.querySelectorAll('#results section').forEach(sec => {
+   const top = sec.dataset.top;
+   sec.ondragstart = e => { e.dataTransfer.setData('text/plain', top); sec.style.opacity = '0.5'; };
+   sec.ondragover = e => { e.preventDefault(); sec.classList.add('over'); };
+   sec.ondragleave = e => { sec.classList.remove('over'); };
+   sec.ondrop = e => {
+     e.preventDefault();
+     sec.classList.remove('over');
+     const draggedTop = e.dataTransfer.getData('text/plain');
+     if(draggedTop && draggedTop !== top) {
+       const draggedItems = state.items.filter(x => x.top === draggedTop);
+       state.items = state.items.filter(x => x.top !== draggedTop);
+       const insertIdx = state.items.findIndex(x => x.top === top);
+       if(insertIdx >= 0) state.items.splice(insertIdx, 0, ...draggedItems);
+       else state.items.push(...draggedItems);
+       render();
+     }
+   };
+   sec.ondragend = () => { sec.style.opacity = '1'; document.querySelectorAll('#results section').forEach(s => s.classList.remove('over')); };
+ });
 }
 function renderPie(totals){const circumference=238.76;let offset=0,svg='';for(const [top,v] of Object.entries(totals)){const amount=Math.max(0,Number(v));const dash=circumference*amount/100;svg+=`<circle cx="50" cy="50" r="38" fill="none" stroke="${CATALOG[top].band}" stroke-width="21" stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="-${offset}"/>`;offset+=dash}$('#pieSegments').innerHTML=svg}
 function optionList(obj,selected){return Object.keys(obj).map(v=>`<option${v===selected?' selected':''}>${esc(v)}</option>`).join('')}
 function renderEditor(){
- $('#nameInput').value=state.name;$('#initialsInput').value=state.initials;$('#editorList').innerHTML=state.items.map((it,i)=>`<div class="editor-card" data-i="${i}" draggable="true"><div class="editor-grid"><label class="field full">Global population<select class="topSel">${optionList(CATALOG,it.top)}</select></label><label class="field full">Population group<select class="groupSel">${optionList(CATALOG[it.top].groups,it.group)}</select></label><label class="field">Percentage<input class="pctInput" type="number" min="0" max="100" step="0.1" value="${it.pct}"></label><label class="field">Hierarchy<select class="levelSel"><option value="1"${it.level===1?' selected':''}>Parent row</option><option value="2"${it.level===2?' selected':''}>Nested row</option></select></label><label class="field full">Recent regions (optional, one per line)<textarea class="regionsInput">${esc(it.regions.join('\n'))}</textarea></label></div><div class="card-actions"><button class="icon-btn move-up" type="button" ${i===0?'disabled':''}>↑</button><button class="icon-btn move-down" type="button" ${i===state.items.length-1?'disabled':''}>↓</button><button class="remove" type="button">Remove</button></div></div>`).join('');
+ $('#nameInput').value=state.name;$('#initialsInput').value=state.initials;$('#editorList').innerHTML=state.items.map((it,i)=>`<div class="editor-card" data-i="${i}" draggable="true"><div class="editor-grid"><label class="field full">Global population<select class="topSel">${optionList(CATALOG,it.top)}</select></label><label class="field full">Population group<select class="groupSel">${optionList(CATALOG[it.top].groups,it.group)}</select></label><label class="field">Percentage<input class="pctInput" type="number" min="0" max="100" step="0.1" value="${it.pct}"></label><label class="field">Hierarchy<select class="levelSel"><option value="1"${parseInt(it.level,10)===1?' selected':''}>Parent row</option><option value="2"${parseInt(it.level,10)===2?' selected':''}>Nested row</option></select></label><label class="field full">Recent regions (optional, one per line)<textarea class="regionsInput">${esc(it.regions.join('\n'))}</textarea></label></div><div class="card-actions"><button class="icon-btn move-up" type="button" ${i===0?'disabled':''}>↑</button><button class="icon-btn move-down" type="button" ${i===state.items.length-1?'disabled':''}>↓</button><button class="remove" type="button">Remove</button></div></div>`).join('');
  let dragSrc = null;
  document.querySelectorAll('.editor-card').forEach(card=>{const i=+card.dataset.i;
    card.ondragstart=e=>{dragSrc=i;e.dataTransfer.effectAllowed='move';card.style.opacity='0.4'};
@@ -120,9 +154,7 @@ $('#openPanel').onclick=()=>{renderEditor();$('#panel').classList.add('open')};$
 
 // High-Res Download Image Functionality
 $('#downloadBtn').onclick = async () => {
-  // Hide prototype mark before screenshot, then restore
   $('.prototype-mark').style.display = 'none';
-  // Scale 4 forces a massive, super crisp output format for PNG
   const canvas = await html2canvas($('#captureTarget'), { scale: 4, useCORS: true, backgroundColor: '#fff' });
   $('.prototype-mark').style.display = 'block';
   
