@@ -19,15 +19,22 @@ body{display:flex;justify-content:center}
 .total,.band .value,.pct{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 .total{position:absolute;right:var(--value-right);top:50%;transform:translateY(-18%);width:72px;font-size:17px;font-weight:700}
 
-/* Band typography - 17px Bold */
+/* Band typography */
 .band{min-height:40px;padding:0 121px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700}
 
-/* Row typography - Increased to 500 (Medium) for a slightly thicker feel */
+/* Row typography */
 .row{position:relative;min-height:49px;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:4px;align-items:center;padding:0 106px 0 14px}.row:after,.detail:after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:1px;background:var(--hair)}.dot{width:14px;height:14px;border-radius:50%;justify-self:start;margin-left:3px}
 .label,.pct{font-size:17px;line-height:1.2;font-weight:500;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px}
 .chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
 .detail{position:relative;padding:14px 15px 12px 37px}.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}.detail-head .dot{margin-left:2px}
-.places{padding:11px 0 0 38px;font-size:14px;line-height:1.55;letter-spacing:-.12px;color:#1c1c1e;font-weight:500}.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:700}.detail.compact{min-height:49px;padding-top:0;padding-bottom:0;display:flex;align-items:center}.detail.compact .detail-head{width:calc(100% + 15px)}
+
+/* Region Layout */
+.places{padding:11px 0 0 38px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
+.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
+
+/* BUG FIX: Removed 'display: flex' so it doesn't shrink on short words like "Lithuanian" */
+.detail.compact{min-height:49px;padding-top:0;padding-bottom:0}
+.detail.compact .detail-head{min-height:49px;width:calc(100% + 15px)}
 
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
@@ -53,10 +60,14 @@ const CATALOG={
 "Western Asian & North African":{band:"#9280f8",text:"#fff",groups:{"Arab, Egyptian & Levantine":"#6d58df","Coptic Egyptian":"#5e49d2","Egyptian":"#755fe5","Levantine":"#826cea","Peninsular Arab":"#8f79ee","North African":"#6b51c9","Northern West Asian":"#4943a6","Anatolian":"#5948cf","Cypriot":"#6150d8","Iranian, Caucasian & Mesopotamian":"#5e52e2","Broadly Western Asian & North African":"#7768eb"}},
 "Melanesian":{band:"#6bd5e8",text:"#173237",groups:{"Melanesian":"#25b8d3"}}
 };
-// Default configured explicitly to match the screenshot NWA/ICM tests
+// Initialized to match the exact test scenario to demonstrate fixed math
 const DEFAULT=[
-{top:"Western Asian & North African",group:"Northern West Asian",pct:100,level:1,regions:[]},
-{top:"Western Asian & North African",group:"Iranian, Caucasian & Mesopotamian",pct:100,level:2,regions:["Lori Province, Armenia","Imereti, Georgia","+ 8 regions"]}
+{top:"Western Asian & North African",group:"Northern West Asian",pct:50.0,level:1,regions:[]},
+{top:"Western Asian & North African",group:"Iranian, Caucasian & Mesopotamian",pct:50.0,level:2,regions:["Tbilisi, Georgia","Erzurum, Turkey (eastern provinces)","+ 3 regions"]},
+{top:"European",group:"Central & Eastern European",pct:50.0,level:1,regions:[]},
+{top:"European",group:"Latvian",pct:47.0,level:2,regions:["Riga, Latvia"]},
+{top:"European",group:"Lithuanian",pct:2.0,level:2,regions:[]},
+{top:"European",group:"British & Irish",pct:1.0,level:2,regions:[]}
 ];
 let state={name:"Mindaugas Linkevicius",initials:"ML",items:structuredClone(DEFAULT)};
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -74,14 +85,13 @@ function render(){
    if(!rows.length)continue;
    const meta = CATALOG[top];
    
-   // Calculate total based strictly on parent (level 1) rows
    const level1Rows = rows.filter(r => parseInt(r.level, 10) === 1);
    let bandTotal = 0;
    
    if (level1Rows.length > 0) {
        bandTotal = level1Rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
    } else {
-       bandTotal = rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
+       bandTotal = Math.max(0, ...rows.map(r => parseFloat(r.pct || 0)));
    }
    pieTotals[top] = bandTotal;
 
