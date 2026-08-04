@@ -35,8 +35,8 @@ body{display:flex;justify-content:center}
 .row.level-1:after, .detail.level-1:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:15px; }
 .row.level-2:after, .detail.level-2:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:38px; }
 
-/* Remove the hairline after the last item in a section */
-section > .row:last-child:after, section > .detail:last-child:after { display: none; }
+/* Remove the line from the last item in the group */
+.row:last-child:after, .detail:last-child:after { display: none; }
 
 .dot{width:11px;height:11px;border-radius:50%;justify-self:start;margin-left:3px}
 .label,.pct{font-size:17px;line-height:1.2;font-weight:500;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-variant-numeric:tabular-nums;text-align:right}
@@ -89,7 +89,6 @@ const DEFAULT=[
 {top:"Melanesian",group:"Melanesian",pct:0.5,level:1,regions:[]}
 ];
 
-// DATA PERSISTENCE LOGIC
 let state = {name:"Alex Miller",initials:"AM",items:structuredClone(DEFAULT)};
 try {
   const savedState = localStorage.getItem('ancestryState');
@@ -159,7 +158,7 @@ function render(){
        const insertIdx = state.items.findIndex(x => x.top === top);
        if(insertIdx >= 0) state.items.splice(insertIdx, 0, ...draggedItems);
        else state.items.push(...draggedItems);
-       saveState();
+       saveState(); // Save to local storage on reorder
        render();
      }
    };
@@ -241,6 +240,7 @@ $('#results').onclick = (e) => {
 
 $('#openPanel').onclick=()=>{renderEditor();$('#panel').classList.add('open')};
 
+// SMART ADD GROUP LOGIC: Dynamically inherits the global population from the previous block
 $('#addGroup').onclick=()=>{
   let top = Object.keys(CATALOG)[0];
   if (state.items.length > 0) {
@@ -252,6 +252,7 @@ $('#addGroup').onclick=()=>{
 
 $('#close').onclick=()=>$('#panel').classList.remove('open');
 
+// Save the state to localStorage every time the user applies their changes
 $('#apply').onclick=()=>{
   state.name=$('#nameInput').value.trim()||'Sample User';
   state.initials=($('#initialsInput').value.trim()||state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('')).toUpperCase();
@@ -260,35 +261,32 @@ $('#apply').onclick=()=>{
   $('#panel').classList.remove('open');
 };
 
-// High-Res Download Image Functionality (Now using Web Share API for native saving on mobile)
+// HIGH-RES EXPORT WITH NATIVE SHARE SHEET (Save Image)
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
   const canvas = await html2canvas($('#captureTarget'), { scale: 4, useCORS: true, backgroundColor: '#fff' });
   $('.prototype-mark').style.display = 'block';
   
-  const dataUrl = canvas.toDataURL('image/png');
-  
-  try {
-    const blob = await (await fetch(dataUrl)).blob();
-    const file = new File([blob], 'Ancestry-Composition.png', { type: 'image/png' });
-    
-    // Check if the native Share API is available (iOS/Android)
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: 'Ancestry Composition'
-      });
-      return; // Stop here if native share succeeds
+  canvas.toBlob(async (blob) => {
+    // If the browser supports the native mobile share sheet (iOS Safari/Android Chrome)
+    if (navigator.share) {
+      const file = new File([blob], 'Ancestry-Composition.png', { type: 'image/png' });
+      try {
+        await navigator.share({
+          files: [file],
+          title: 'Ancestry Composition',
+        });
+      } catch (err) {
+        // User likely canceled the share sheet, do nothing.
+      }
+    } else {
+      // Fallback for desktop browsers without native sharing
+      const link = document.createElement('a');
+      link.download = 'Ancestry-Composition.png';
+      link.href = URL.createObjectURL(blob);
+      link.click();
     }
-  } catch(e) {
-    console.warn("Share API not available or cancelled, falling back to download link.");
-  }
-  
-  // Fallback for desktop browsers
-  const link = document.createElement('a');
-  link.download = 'Ancestry-Composition.png';
-  link.href = dataUrl;
-  link.click();
+  }, 'image/png');
 };
 
 render();
