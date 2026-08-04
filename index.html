@@ -264,26 +264,14 @@ $('#apply').onclick=()=>{
 // HIGH-RES EXPORT WITH NATIVE SHARE SHEET (Save Image)
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
-  const target = $('#captureTarget');
-  const w = target.offsetWidth;
-  const h = target.scrollHeight;
   
-  const canvas = await html2canvas(target, { 
-    scale: window.devicePixelRatio ? Math.min(window.devicePixelRatio * 1.5, 4) : 4,
+  // Clean integer scale (4) avoids sub-pixel skewing during rendering
+  const canvas = await html2canvas($('#captureTarget'), { 
+    scale: 4, 
     useCORS: true, 
-    backgroundColor: '#fff',
-    width: w,
-    height: h,
-    windowWidth: window.innerWidth, // Prevents responsive reflows during capture
-    onclone: (clonedDoc) => {
-      const el = clonedDoc.getElementById('captureTarget');
-      // Hard-lock the dimensions of the cloned container to perfectly match reality
-      el.style.width = w + 'px';
-      el.style.minWidth = w + 'px';
-      el.style.maxWidth = w + 'px';
-      el.style.height = h + 'px';
-    }
+    backgroundColor: '#fff' 
   });
+  
   $('.prototype-mark').style.display = 'block';
   
   canvas.toBlob(async (blob) => {
