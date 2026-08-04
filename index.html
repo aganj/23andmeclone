@@ -264,11 +264,29 @@ $('#apply').onclick=()=>{
 // HIGH-RES EXPORT WITH NATIVE SHARE SHEET (Save Image)
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
-  const canvas = await html2canvas($('#captureTarget'), { scale: 4, useCORS: true, backgroundColor: '#fff' });
+  const target = $('#captureTarget');
+  const w = target.offsetWidth;
+  const h = target.scrollHeight;
+  
+  const canvas = await html2canvas(target, { 
+    scale: window.devicePixelRatio ? Math.min(window.devicePixelRatio * 1.5, 4) : 4,
+    useCORS: true, 
+    backgroundColor: '#fff',
+    width: w,
+    height: h,
+    windowWidth: window.innerWidth, // Prevents responsive reflows during capture
+    onclone: (clonedDoc) => {
+      const el = clonedDoc.getElementById('captureTarget');
+      // Hard-lock the dimensions of the cloned container to perfectly match reality
+      el.style.width = w + 'px';
+      el.style.minWidth = w + 'px';
+      el.style.maxWidth = w + 'px';
+      el.style.height = h + 'px';
+    }
+  });
   $('.prototype-mark').style.display = 'block';
   
   canvas.toBlob(async (blob) => {
-    // If the browser supports the native mobile share sheet (iOS Safari/Android Chrome)
     if (navigator.share) {
       const file = new File([blob], 'Ancestry-Composition.png', { type: 'image/png' });
       try {
@@ -277,10 +295,9 @@ $('#downloadBtn').onclick = async () => {
           title: 'Ancestry Composition',
         });
       } catch (err) {
-        // User likely canceled the share sheet, do nothing.
+        // User canceled the share sheet, fail gracefully
       }
     } else {
-      // Fallback for desktop browsers without native sharing
       const link = document.createElement('a');
       link.download = 'Ancestry-Composition.png';
       link.href = URL.createObjectURL(blob);
