@@ -265,11 +265,17 @@ $('#apply').onclick=()=>{
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
   
-  // Clean integer scale (4) avoids sub-pixel skewing during rendering
   const canvas = await html2canvas($('#captureTarget'), { 
     scale: 4, 
     useCORS: true, 
-    backgroundColor: '#fff' 
+    backgroundColor: '#fff',
+    onclone: (clonedDoc) => {
+      // INJECT CSS ONLY INTO THE CAPTURE CLONE TO FIX HTML2CANVAS SKEWING BUGS
+      // Disabling optimizeLegibility and negative letter-spacing stops iOS text from jumping around.
+      const style = clonedDoc.createElement('style');
+      style.innerHTML = '* { text-rendering: auto !important; letter-spacing: normal !important; font-kerning: none !important; }';
+      clonedDoc.head.appendChild(style);
+    }
   });
   
   $('.prototype-mark').style.display = 'block';
