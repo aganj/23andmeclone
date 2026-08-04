@@ -85,7 +85,23 @@ const DEFAULT=[
 {top:"European",group:"Finnish",pct:1.5,level:1,regions:[]},
 {top:"Melanesian",group:"Melanesian",pct:0.5,level:1,regions:[]}
 ];
-let state={name:"Alex Miller",initials:"AM",items:structuredClone(DEFAULT)};
+
+// DATA PERSISTENCE LOGIC
+// Check localStorage first, otherwise fallback to the DEFAULT configuration
+let state = {name:"Alex Miller",initials:"AM",items:structuredClone(DEFAULT)};
+try {
+  const savedState = localStorage.getItem('ancestryState');
+  if (savedState) {
+    state = JSON.parse(savedState);
+  }
+} catch(e) {
+  console.warn("Failed to load saved state", e);
+}
+
+function saveState() {
+  localStorage.setItem('ancestryState', JSON.stringify(state));
+}
+
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=n=>`${Number(n||0).toFixed(1)}%`;
 
@@ -141,6 +157,7 @@ function render(){
        const insertIdx = state.items.findIndex(x => x.top === top);
        if(insertIdx >= 0) state.items.splice(insertIdx, 0, ...draggedItems);
        else state.items.push(...draggedItems);
+       saveState(); // Save to local storage on reorder
        render();
      }
    };
@@ -190,7 +207,6 @@ function renderPie(){
   svg += `<circle cx="50" cy="50" r="48.5" fill="#fff"/>`;
   svg += `<g transform="rotate(-90 50 50)">${innerPaths}${outerPaths}</g>`;
   svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="3.5"/>`;
-  // Scaled down text and adjusted vertical baseline to perfectly fit the smaller center hole
   svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
 
   $('#pieSegments').innerHTML = svg;
@@ -234,7 +250,15 @@ $('#addGroup').onclick=()=>{
 };
 
 $('#close').onclick=()=>$('#panel').classList.remove('open');
-$('#apply').onclick=()=>{state.name=$('#nameInput').value.trim()||'Sample User';state.initials=($('#initialsInput').value.trim()||state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('')).toUpperCase();render();$('#panel').classList.remove('open')};
+
+// Save the state to localStorage every time the user applies their changes
+$('#apply').onclick=()=>{
+  state.name=$('#nameInput').value.trim()||'Sample User';
+  state.initials=($('#initialsInput').value.trim()||state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('')).toUpperCase();
+  saveState();
+  render();
+  $('#panel').classList.remove('open');
+};
 
 // High-Res Download Image Functionality
 $('#downloadBtn').onclick = async () => {
