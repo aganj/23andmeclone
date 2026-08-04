@@ -13,7 +13,7 @@ body{display:flex;justify-content:center}
 .topbar{height:67px;position:relative;background:linear-gradient(#f4f5fa,#e8edf2);overflow:hidden}.topbar:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 145px 48px at 30% 104%,rgba(255,255,255,.94) 0 55%,transparent 56%),radial-gradient(ellipse 120px 48px at 86% 100%,rgba(255,255,255,.52) 0 52%,transparent 53%)}
 .nav{position:relative;z-index:1;height:67px;display:grid;grid-template-columns:49px 1fr 111px;align-items:center;gap:8px;padding:7px 17px 7px 18px}.circle,.capsule{border:1px solid rgba(255,255,255,.96);background:rgba(255,255,255,.88);box-shadow:0 2px 5px rgba(0,0,0,.09)}.circle{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer}.capsule{height:49px;border-radius:26px;display:grid;grid-template-columns:1fr 1fr}.capsule button{border:0;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}.page-title{font-size:20px;line-height:1;font-weight:600;text-align:center;white-space:nowrap;letter-spacing:-.4px}.circle svg{width:29px;height:29px}.capsule svg{width:27px;height:27px}
 
-/* Profile Section Adjustments - All text 17px */
+/* Profile Section */
 .profile{height:80px;position:relative}.handle{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:37px;height:3px;border-radius:4px;background:#e5e5e5}.pie{position:absolute;left:9px;top:-11px;width:81px;height:81px;border-radius:50%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}.pie svg{width:100%;height:100%;display:block}
 .profile-copy{height:100%;padding:20px 116px 0 155px;display:flex;align-items:center;font-size:17px;font-weight:700;letter-spacing:-.42px;position:relative}.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .total,.band .value,.pct{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
@@ -22,11 +22,12 @@ body{display:flex;justify-content:center}
 /* Band typography - 17px Bold */
 .band{min-height:40px;padding:0 121px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700}
 
-/* Row typography - 17px Regular */
+/* Row typography - Increased to 500 (Medium) for a slightly thicker feel */
 .row{position:relative;min-height:49px;display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:4px;align-items:center;padding:0 106px 0 14px}.row:after,.detail:after{content:"";position:absolute;left:15px;right:15px;bottom:0;height:1px;background:var(--hair)}.dot{width:14px;height:14px;border-radius:50%;justify-self:start;margin-left:3px}
-.label,.pct{font-size:17px;line-height:1.2;font-weight:400;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px}
+.label,.pct{font-size:17px;line-height:1.2;font-weight:500;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px}
 .chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
-.detail{position:relative;padding:14px 15px 12px 37px}.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}.detail-head .dot{margin-left:2px}.places{padding:11px 0 0 38px;font-size:14px;line-height:1.55;letter-spacing:-.12px;color:#1c1c1e}.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}.detail.compact{min-height:49px;padding-top:0;padding-bottom:0;display:flex;align-items:center}.detail.compact .detail-head{width:calc(100% + 15px)}
+.detail{position:relative;padding:14px 15px 12px 37px}.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:35px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:106px}.detail-head .dot{margin-left:2px}
+.places{padding:11px 0 0 38px;font-size:14px;line-height:1.55;letter-spacing:-.12px;color:#1c1c1e;font-weight:500}.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:700}.detail.compact{min-height:49px;padding-top:0;padding-bottom:0;display:flex;align-items:center}.detail.compact .detail-head{width:calc(100% + 15px)}
 
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
@@ -73,15 +74,13 @@ function render(){
    if(!rows.length)continue;
    const meta = CATALOG[top];
    
-   // BUG FIX: Strictly parse integer for level to ensure no string vs int fallback issues.
+   // Calculate total based strictly on parent (level 1) rows
    const level1Rows = rows.filter(r => parseInt(r.level, 10) === 1);
    let bandTotal = 0;
    
    if (level1Rows.length > 0) {
-       // Only sum the exact matches for Parent rows (Level 1)
        bandTotal = level1Rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
    } else {
-       // Only execute if user manually deleted ALL Level 1 rows for a category
        bandTotal = rows.reduce((sum, r) => sum + parseFloat(r.pct || 0), 0);
    }
    pieTotals[top] = bandTotal;
