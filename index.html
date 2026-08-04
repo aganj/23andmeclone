@@ -55,11 +55,11 @@ body{display:flex;justify-content:center}
 #results {cursor: pointer;} 
 @media(max-width:380px){:root{--value-right:34px;--chevron-right:10px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
-<main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
+<main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
 <section class="profile">
   <div class="handle"></div>
   <div class="pie">
-    <svg viewBox="0 0 100 100" shape-rendering="geometricPrecision" id="pieSegments"></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" shape-rendering="geometricPrecision" id="pieSegments"></svg>
   </div>
   <span class="name" id="nameOut"></span>
   <span class="total">100%</span>
@@ -128,7 +128,7 @@ function render(){
    html+=`<section draggable="true" data-top="${esc(top)}"><div class="band" style="background:${meta.band};color:${meta.text}"><span class="title">${esc(top)}</span><span class="value">${fmt(bandTotal)}</span></div>`;
    for(const r of rows){
        const color=meta.groups[r.group]||Object.values(meta.groups)[0];
-       const chev='<svg class="chev" viewBox="0 0 8 14" fill="none" stroke="#c7c7cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>';
+       const chev='<svg xmlns="http://www.w3.org/2000/svg" class="chev" viewBox="0 0 8 14" fill="none" stroke="#c7c7cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l6 6-6 6"/></svg>';
        const lvl = parseInt(r.level, 10) || 1;
        
        if(!r.regions.length){
