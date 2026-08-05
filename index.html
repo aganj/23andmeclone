@@ -129,7 +129,6 @@ function render(){
    for(const r of rows){
        const color=meta.groups[r.group]||Object.values(meta.groups)[0];
        
-       // Fixed html2canvas capture by replacing inline SVG with a bulletproof base64 embedded image
        const chev='<img class="chev" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDE0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjN2M3Y2MiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xIDFsNiA2LTYgNiIvPjwvc3ZnPg==" alt="">';
        
        const lvl = parseInt(r.level, 10) || 1;
@@ -170,10 +169,10 @@ function render(){
 }
 
 function renderPie(){
-  // Inner ring base layout
-  const rIn = 32.5, cIn = 2 * Math.PI * rIn; 
-  // Outer ring adjusted from 35px radius back out to 36px to split the difference perfectly
-  const rOut = 36, cOut = 2 * Math.PI * rOut; 
+  // Inner ring scaled down to leave white border (radius 31.5, stroke 27, outer edge = 45)
+  const rIn = 31.5, cIn = 2 * Math.PI * rIn; 
+  // Outer ring scaled down equally (radius 34.5, stroke 21, outer edge = 45)
+  const rOut = 34.5, cOut = 2 * Math.PI * rOut; 
   
   let offsetIn = 0, offsetOut = 0;
   let innerPaths = '', outerPaths = '';
@@ -189,7 +188,7 @@ function renderPie(){
     if(bandAmt > 0) {
       const dashIn = (cIn * bandAmt) / 100;
       const bleedIn = (bandAmt < 100 && bandAmt > 0) ? 1.2 : 0;
-      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="29" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
+      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="27" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
       offsetIn += dashIn;
       
       if (l1Rows.length === 0) {
@@ -201,8 +200,7 @@ function renderPie(){
             const dashOut = (cOut * amt) / 100;
             const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
             const color = CATALOG[top].groups[r.group] || CATALOG[top].band;
-            // Thickened stroke-width slightly to 22. Same overall 47px edge radius is maintained.
-            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
+            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="21" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
             offsetOut += dashOut;
           }
         }
@@ -211,6 +209,7 @@ function renderPie(){
   }
 
   let svg = '';
+  // White background explicitly larger (48.5) than the colored rings (max outer edge 45) to create a clean white outline
   svg += `<circle cx="50" cy="50" r="48.5" fill="#fff"/>`;
   svg += `<g transform="rotate(-90 50 50)">${innerPaths}${outerPaths}</g>`;
   svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="3.5"/>`;
