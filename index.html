@@ -169,10 +169,10 @@ function render(){
 }
 
 function renderPie(){
-  // Inner ring scaled down to leave white border (radius 31.5, stroke 27, outer edge = 45)
-  const rIn = 31.5, cIn = 2 * Math.PI * rIn; 
-  // Outer ring scaled down equally (radius 34.5, stroke 21, outer edge = 45)
-  const rOut = 34.5, cOut = 2 * Math.PI * rOut; 
+  // Pushed outward: inner ring extends to 46.5 outer edge
+  const rIn = 32.5, cIn = 2 * Math.PI * rIn; 
+  // Pushed outward: outer ring extends to 46.5 outer edge
+  const rOut = 35.5, cOut = 2 * Math.PI * rOut; 
   
   let offsetIn = 0, offsetOut = 0;
   let innerPaths = '', outerPaths = '';
@@ -188,7 +188,7 @@ function renderPie(){
     if(bandAmt > 0) {
       const dashIn = (cIn * bandAmt) / 100;
       const bleedIn = (bandAmt < 100 && bandAmt > 0) ? 1.2 : 0;
-      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="27" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
+      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="28" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
       offsetIn += dashIn;
       
       if (l1Rows.length === 0) {
@@ -200,7 +200,7 @@ function renderPie(){
             const dashOut = (cOut * amt) / 100;
             const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
             const color = CATALOG[top].groups[r.group] || CATALOG[top].band;
-            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="21" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
+            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
             offsetOut += dashOut;
           }
         }
@@ -209,10 +209,12 @@ function renderPie(){
   }
 
   let svg = '';
-  // White background explicitly larger (48.5) than the colored rings (max outer edge 45) to create a clean white outline
+  // Background at 48.5 minus the pie's outer edge at 46.5 leaves exactly a crisp 2-unit outer white border
   svg += `<circle cx="50" cy="50" r="48.5" fill="#fff"/>`;
   svg += `<g transform="rotate(-90 50 50)">${innerPaths}${outerPaths}</g>`;
-  svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="3.5"/>`;
+  
+  // Center hole stroke reduced from 3.5 down to 2, balancing the inner and outer white outlines perfectly
+  svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="2"/>`;
   svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
 
   $('#pieSegments').innerHTML = svg;
