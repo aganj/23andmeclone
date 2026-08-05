@@ -172,8 +172,8 @@ function render(){
 function renderPie(){
   // Inner ring base layout
   const rIn = 32.5, cIn = 2 * Math.PI * rIn; 
-  // Outer ring adjusted from 37px thickness to 35px radius to be thicker on the inside, reducing the inner ring exposure
-  const rOut = 35, cOut = 2 * Math.PI * rOut; 
+  // Outer ring adjusted from 35px radius back out to 36px to split the difference perfectly
+  const rOut = 36, cOut = 2 * Math.PI * rOut; 
   
   let offsetIn = 0, offsetOut = 0;
   let innerPaths = '', outerPaths = '';
@@ -201,8 +201,8 @@ function renderPie(){
             const dashOut = (cOut * amt) / 100;
             const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
             const color = CATALOG[top].groups[r.group] || CATALOG[top].band;
-            // Thickened stroke-width from 20 to 24. Same overall 47px edge radius is maintained.
-            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="24" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
+            // Thickened stroke-width slightly to 22. Same overall 47px edge radius is maintained.
+            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
             offsetOut += dashOut;
           }
         }
