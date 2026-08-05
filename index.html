@@ -6,7 +6,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:38px;--chevron-right:12px}
-*{box-sizing:border-box; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
+/* Changed text-rendering to auto to prevent html2canvas kerning bugs globally without hacks */
+*{box-sizing:border-box; text-rendering:auto; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
 html,body{margin:0;background:#eceff2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
 body{display:flex;justify-content:center}
 .app{width:min(100%,480px);min-height:100vh;background:#fff;overflow:hidden;position:relative;box-shadow:0 0 24px rgba(0,0,0,.08)}
@@ -45,8 +46,7 @@ body{display:flex;justify-content:center}
 
 /* Region Layout */
 .places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
-/* Restored original 10px vertical rhythm and tightened horizontal word spacing slightly */
-.places p{margin:0 0 10px;word-spacing:-0.5px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
+.places p{margin:0 0 10px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
 
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
@@ -138,7 +138,7 @@ function render(){
            html+=`<div class="row level-${lvl}"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>`
        } else {
            html+=`<div class="detail level-${lvl}"><div class="detail-head"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div><div class="places">${r.regions.map((v,idx)=>{
-             // Strip out accidental double spaces inside the region name strings to prevent strange word gaps
+             // Script cleans extra whitespace between words automatically
              const cleanV = v.trim().replace(/\s+/g, ' ');
              const p = cleanV.split(',');
              return `<p>${idx<2&&p.length>1?`<strong>${esc(p[0].trim())}</strong>, ${esc(p.slice(1).join(',').trim())}`:esc(cleanV)}</p>`
@@ -274,29 +274,22 @@ $('#apply').onclick=()=>{
   $('#panel').classList.remove('open');
 };
 
-// HIGH-RES EXPORT WITH NATIVE SHARE SHEET (Save Image)
+// EXPORT TO HIGH-QUALITY JPEG
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
   
   const canvas = await html2canvas($('#captureTarget'), { 
     scale: 4, 
     useCORS: true, 
-    backgroundColor: '#fff',
-    onclone: (clonedDoc) => {
-      // INJECT CSS ONLY INTO THE CAPTURE CLONE TO FIX HTML2CANVAS BUGS
-      // Disabling font-kerning fixes the bold-text "Baku" gap bug, while leaving 
-      // the native tight Apple letter-spacing entirely untouched so it isn't uneven.
-      const style = clonedDoc.createElement('style');
-      style.innerHTML = '* { font-kerning: none !important; text-rendering: geometricPrecision !important; }';
-      clonedDoc.head.appendChild(style);
-    }
+    backgroundColor: '#fff'
+    // Removed the CSS onclone hack entirely so letter kerning remains natively perfect
   });
   
   $('.prototype-mark').style.display = 'block';
   
   canvas.toBlob(async (blob) => {
     if (navigator.share) {
-      const file = new File([blob], 'Ancestry-Composition.png', { type: 'image/png' });
+      const file = new File([blob], 'Ancestry-Composition.jpg', { type: 'image/jpeg' });
       try {
         await navigator.share({
           files: [file],
@@ -307,11 +300,11 @@ $('#downloadBtn').onclick = async () => {
       }
     } else {
       const link = document.createElement('a');
-      link.download = 'Ancestry-Composition.png';
+      link.download = 'Ancestry-Composition.jpg';
       link.href = URL.createObjectURL(blob);
       link.click();
     }
-  }, 'image/png');
+  }, 'image/jpeg', 1.0); // Highest quality JPEG export
 };
 
 render();
