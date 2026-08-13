@@ -68,7 +68,20 @@ body{display:flex;justify-content:center}
 </section>
 <div id="results" title="Click anywhere to edit results"></div></main>
 <button class="prototype-mark" id="openPanel">RESEARCH PROTOTYPE · NOT 23ANDME</button>
-<aside class="panel" id="panel"><div class="panel-head"><h2>Customize ancestry results</h2><button id="close">Close</button></div><div class="panel-body"><div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div><div id="editorList" class="editor-list"></div><button class="add-btn" id="addGroup">+ Add ancestry group</button><button class="apply-btn" id="apply">Apply changes</button><p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line. Colors are assigned automatically from the selected population. The visible palette has been calibrated against the supplied iPhone capture and additional official 23andMe mobile/marketing screenshots. This independent research prototype remains visibly labeled and is not affiliated with 23andMe.</p></div></aside>
+<aside class="panel" id="panel"><div class="panel-head"><h2>Customize ancestry results</h2><button id="close">Close</button></div><div class="panel-body">
+
+  <!-- NEW MULTI-PROFILE UI -->
+  <label class="field" style="margin-bottom:6px">Saved Profile
+    <select id="profileSelect"></select>
+  </label>
+  <div class="card-actions" style="margin-top:0;margin-bottom:14px">
+    <button class="icon-btn" id="newProfile" type="button" style="flex:1;width:auto">New</button>
+    <button class="icon-btn" id="dupProfile" type="button" style="flex:1;width:auto">Duplicate</button>
+    <button class="remove" id="delProfile" type="button" style="flex:1">Delete</button>
+  </div>
+  <hr style="border:0;border-top:1px solid #d8d8dc;margin:0 -12px 14px">
+
+  <div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div><div id="editorList" class="editor-list"></div><button class="add-btn" id="addGroup">+ Add ancestry group</button><button class="apply-btn" id="apply">Apply changes</button><p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line. Colors are assigned automatically from the selected population. The visible palette has been calibrated against the supplied iPhone capture and additional official 23andMe mobile/marketing screenshots. This independent research prototype remains visibly labeled and is not affiliated with 23andMe.</p></div></aside>
 <script>
 const CATALOG={
 "European":{band:"#6cb5ff",text:"#000",groups:{
@@ -91,18 +104,46 @@ const DEFAULT=[
 {top:"Melanesian",group:"Melanesian",pct:0.5,level:1,regions:[]}
 ];
 
-let state = {name:"Alex Miller",initials:"AM",items:structuredClone(DEFAULT)};
+// ADVANCED DATA PERSISTENCE WITH MULTIPLE PROFILES
+let profiles = [];
+let currentProfileIndex = 0;
+
 try {
-  const savedState = localStorage.getItem('ancestryState');
-  if (savedState) {
-    state = JSON.parse(savedState);
+  const savedProfiles = localStorage.getItem('ancestryProfiles');
+  const oldState = localStorage.getItem('ancestryState'); // Legacy fallback
+  
+  if (savedProfiles) {
+    profiles = JSON.parse(savedProfiles);
+    currentProfileIndex = parseInt(localStorage.getItem('ancestryCurrentIndex') || '0', 10);
+    if (currentProfileIndex >= profiles.length || isNaN(currentProfileIndex)) currentProfileIndex = 0;
+  } else if (oldState) {
+    profiles = [JSON.parse(oldState)];
+    localStorage.removeItem('ancestryState'); // Clean up old system
+  } else {
+    profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT)}];
   }
 } catch(e) {
   console.warn("Failed to load saved state", e);
+  profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT)}];
 }
 
+let state = profiles[currentProfileIndex];
+
 function saveState() {
-  localStorage.setItem('ancestryState', JSON.stringify(state));
+  localStorage.setItem('ancestryProfiles', JSON.stringify(profiles));
+  localStorage.setItem('ancestryCurrentIndex', currentProfileIndex.toString());
+}
+
+// Syncs currently typed values back into the active object so they aren't lost when switching profiles
+function syncInputsToState() {
+  state.name = $('#nameInput').value.trim() || 'Sample User';
+  state.initials = $('#initialsInput').value.trim() || state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+}
+
+function updateProfileUI() {
+  $('#profileSelect').innerHTML = profiles.map((p, i) => `<option value="${i}"${i===currentProfileIndex?' selected':''}>${esc(p.name || 'Unnamed Profile')}</option>`).join('');
+  $('#delProfile').disabled = profiles.length <= 1;
+  $('#delProfile').style.opacity = profiles.length <= 1 ? '0.4' : '1';
 }
 
 const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -230,6 +271,7 @@ function renderPie(){
 
 function optionList(obj,selected){return Object.keys(obj).map(v=>`<option${v===selected?' selected':''}>${esc(v)}</option>`).join('')}
 function renderEditor(){
+ updateProfileUI();
  $('#nameInput').value=state.name;$('#initialsInput').value=state.initials;$('#editorList').innerHTML=state.items.map((it,i)=>`<div class="editor-card" data-i="${i}" draggable="true"><div class="editor-grid"><label class="field full">Global population<select class="topSel">${optionList(CATALOG,it.top)}</select></label><label class="field full">Population group<select class="groupSel">${optionList(CATALOG[it.top].groups,it.group)}</select></label><label class="field">Percentage<input class="pctInput" type="number" min="0" max="100" step="0.1" value="${it.pct}"></label><label class="field">Hierarchy<select class="levelSel"><option value="1"${parseInt(it.level,10)===1?' selected':''}>Parent row</option><option value="2"${parseInt(it.level,10)===2?' selected':''}>Nested row</option></select></label><label class="field full">Recent regions (optional, one per line)<textarea class="regionsInput">${esc(it.regions.join('\n'))}</textarea></label></div><div class="card-actions"><button class="icon-btn move-up" type="button" ${i===0?'disabled':''}>↑</button><button class="icon-btn move-down" type="button" ${i===state.items.length-1?'disabled':''}>↓</button><button class="remove" type="button">Remove</button></div></div>`).join('');
  let dragSrc = null;
  document.querySelectorAll('.editor-card').forEach(card=>{const i=+card.dataset.i;
@@ -245,6 +287,46 @@ function renderEditor(){
    card.querySelector('.remove').onclick=()=>{state.items.splice(i,1);renderEditor()}
  })
 }
+
+// PROFILE MANAGEMENT EVENT LISTENERS
+$('#profileSelect').onchange = (e) => {
+  syncInputsToState();
+  currentProfileIndex = Number(e.target.value);
+  state = profiles[currentProfileIndex];
+  saveState();
+  renderEditor();
+};
+
+$('#newProfile').onclick = () => {
+  syncInputsToState();
+  profiles.push({name: "New Profile", initials: "NP", items: []});
+  currentProfileIndex = profiles.length - 1;
+  state = profiles[currentProfileIndex];
+  saveState();
+  renderEditor();
+};
+
+$('#dupProfile').onclick = () => {
+  syncInputsToState();
+  let copy = structuredClone(state);
+  copy.name += " (Copy)";
+  profiles.push(copy);
+  currentProfileIndex = profiles.length - 1;
+  state = profiles[currentProfileIndex];
+  saveState();
+  renderEditor();
+};
+
+$('#delProfile').onclick = () => {
+  if (profiles.length > 1) {
+    profiles.splice(currentProfileIndex, 1);
+    currentProfileIndex = Math.max(0, currentProfileIndex - 1);
+    state = profiles[currentProfileIndex];
+    saveState();
+    renderEditor();
+  }
+};
+
 
 // Open editor smoothly when clicking on the results list
 $('#results').onclick = (e) => { 
@@ -269,8 +351,7 @@ $('#close').onclick=()=>$('#panel').classList.remove('open');
 
 // Save the state to localStorage every time the user applies their changes
 $('#apply').onclick=()=>{
-  state.name=$('#nameInput').value.trim()||'Sample User';
-  state.initials=($('#initialsInput').value.trim()||state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('')).toUpperCase();
+  syncInputsToState();
   saveState();
   render();
   $('#panel').classList.remove('open');
