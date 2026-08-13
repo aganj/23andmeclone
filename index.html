@@ -26,7 +26,7 @@ body{display:flex;justify-content:center}
 
 /* Row typography and tight hierarchy indentation */
 .row{position:relative;min-height:46px;display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:4px;align-items:center;}
-/* Added 10px top/bottom padding to give multi-line labels like "Czech..." proper breathing room */
+/* Added 10px top/bottom padding to give multi-line labels proper breathing room */
 .row.level-1 { padding: 10px 110px 10px 14px; }
 .row.level-2 { padding: 10px 110px 10px 37px; }
 
@@ -87,7 +87,7 @@ const CATALOG={
 "European":{band:"#81c1fb",text:"#000",groups:{
 "Western European":"#3d609f",
 "French":"#1c68df",
-"Austrian & Southern German":"#5295e8",
+"Austrian & Southern German":"#5189e5",
 "Swiss, Southwestern German & Western Austrian":"#387fe0",
 "Dutch & Northern German":"#508ae5",
 "Belgian, Rhinelander & Southern Dutch":"#5b72bc",
@@ -103,11 +103,13 @@ const CATALOG={
 "Danish":"#4999d2",
 "Icelandic":"#5bb0e4",
 "Norwegian":"#4da4d9",
-"Italian & Maltese":"#3955bd",
-"Southern Italian":"#3955bd",
-"Northern Italian":"#3955bd",
-"Greek & Balkan":"#4348b6",
-"Greek":"#4348b6",
+"Italian & Maltese":"#3e5593",
+"Southern Italian":"#2662e1",
+"Northern Italian":"#3e5593",
+"Greek & Balkan":"#4946a1",
+"Greek":"#444de2",
+"Albanian & Macedonian":"#5150d2",
+"Bulgarian, Moldovan & Romanian":"#625ddf",
 "Bosnian, Croatian, Montenegrin & Serbian":"#393fc5",
 "Spanish & Portuguese":"#3b46be",
 "Canary Islander":"#2c3cc8",
@@ -125,9 +127,9 @@ const CATALOG={
 "Ashkenazi Jewish":"#19c3e4"}},
 "Central & South Asian":{band:"#8cf34c",text:"#2f3032",groups:{"Northern Indian & Pakistani":"#dfee28","Bengali & Northeast Indian":"#bbf366","Central Asian, Northern Indian & Pakistani":"#e8dc1b","Central Asian":"#e3dc50","Gujarati Patidar":"#e4bd15","Southern Indian Subgroup":"#cce022","Southern South Asian":"#bdd830","Malayali Subgroup":"#42c8b0","Southern Indian & Sri Lankan":"#3bd78b","Broadly Central & South Asian":"#7ab857"}},
 "Indigenous American":{band:"#f85bf3",text:"#fff",groups:{"North American":"#e5429b","Arctic North American":"#c728bd","Western North American":"#e626ad","Southern Mesoamerican":"#e228c6","Central Andean & Amazonian":"#e228c6","Northern Andean":"#d824bd","Indigenous American":"#18b7a8"}},
-"East Asian":{band:"#fbc387",text:"#292b2e",groups:{"Chinese":"#b14339","Southern Coastal Chinese":"#ee4d3e","Northern Chinese & Tibetan":"#e83827","Southern Chinese & Taiwanese":"#f44b41","Filipino & Austronesian":"#eea236","Filipino":"#e46b3f","Indonesian, Thai, Khmer & Myanma":"#d67a4d","Vietnamese":"#df8445","Japanese":"#e54273","Korean":"#ef2424","Northern Asian":"#c6654e","Manchurian & Mongolian":"#da5c43","Siberian":"#ec785c","Broadly Northern Asian":"#fa8566","Broadly East Asian":"#c27766"}},
-"Sub-Saharan African":{band:"#a25cf5",text:"#fff",groups:{"West African":"#643ecc","Nigerian":"#734be0","Senegambian & Guinean":"#643ecc","Ghanaian, Liberian & Sierra Leonean":"#734be0","Congolese & Southern East African":"#643ecc","Angolan & Congolese":"#734be0","Southern East African":"#7a52e5","African Hunter-Gatherer":"#643ecc","Northern East African":"#c53e70","Ethiopian & Eritrean":"#b83368","Sudanese":"#d0507f","Broadly Sub-Saharan African":"#da6972"}},
-"Western Asian & North African":{band:"#a880f8",text:"#fff",groups:{"Northern West Asian":"#3f32a8","Iranian, Caucasian & Mesopotamian":"#595de6","Arab, Egyptian & Levantine":"#5b4cdb","Egyptian & Southern Levantine":"#6553e6","Levantine":"#6553e6","Coptic Egyptian":"#796cf0","Peninsular Arab":"#6c5ce7","North African":"#604ee0","Cypriot":"#4e3cdb","Anatolian":"#4c44ce","Broadly Western Asian & North African":"#7768eb"}},
+"East Asian":{band:"#fbc387",text:"#292b2e",groups:{"Chinese":"#b14339","Southern Coastal Chinese":"#ee4d3e","Northern Chinese & Tibetan":"#e83827","Southern Chinese & Taiwanese":"#f44b41","Filipino & Austronesian":"#eea236","Filipino":"#e46b3f","Indonesian, Thai, Khmer & Myanma":"#d67a4d","Vietnamese":"#df8445","Japanese":"#e54273","Korean":"#ef2424","Northern Asian":"#c6654e","Manchurian & Mongolian":"#da5c43","Siberian":"#eb6c4f","Broadly Northern Asian":"#fa8566","Broadly East Asian":"#c27766"}},
+"Sub-Saharan African":{band:"#a25cf5",text:"#fff",groups:{"West African":"#643ecc","Nigerian":"#734be0","Senegambian & Guinean":"#643ecc","Ghanaian, Liberian & Sierra Leonean":"#734be0","Congolese & Southern East African":"#643ecc","Angolan & Congolese":"#734be0","Southern East African":"#7a52e5","African Hunter-Gatherer":"#643ecc","Northern East African":"#c53e70","Ethiopian & Eritrean":"#b83368","Sudanese":"#6819d1","Broadly Sub-Saharan African":"#da6972"}},
+"Western Asian & North African":{band:"#a07cf0",text:"#fff",groups:{"Northern West Asian":"#443b96","Iranian, Caucasian & Mesopotamian":"#6c59e6","Arab, Egyptian & Levantine":"#5b4cdb","Egyptian & Southern Levantine":"#6553e6","Levantine":"#6553e6","Coptic Egyptian":"#796cf0","Peninsular Arab":"#6c5ce7","North African":"#604ee0","Cypriot":"#3f35cb","Anatolian":"#514bc5","Broadly Western Asian & North African":"#7768eb"}},
 "Melanesian":{band:"#6bd5e8",text:"#173237",groups:{"Melanesian":"#25b8d3"}}
 };
 
