@@ -232,7 +232,6 @@ function renderPie(){
       innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="28" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
       offsetIn += dashIn;
       
-      // NEW LOGIC: Collect specific Level 2 children to draw on the outer ring
       let outerSegments = [];
       for (let i = 0; i < rowsForTop.length; i++) {
         const r = rowsForTop[i];
@@ -243,7 +242,6 @@ function renderPie(){
           let children = [];
           let j = i + 1;
           
-          // Look ahead to find all Level 2 children nested under this Level 1 parent
           while (j < rowsForTop.length && (parseInt(rowsForTop[j].level, 10) || 1) === 2) {
             children.push(rowsForTop[j]);
             childSum += parseFloat(rowsForTop[j].pct || 0);
@@ -251,23 +249,17 @@ function renderPie(){
           }
           
           if (children.length > 0) {
-            // Push the specific children to the pie chart
             outerSegments.push(...children);
             
-            // If the parent percentage is bigger than the sum of its children, 
-            // the remaining amount belongs to the parent (e.g. "Broadly NWA")
             let diff = parseFloat(r.pct || 0) - childSum;
             if (diff > 0.05) {
               outerSegments.push({ group: r.group, pct: diff });
             }
-            // Skip over the children we just processed
             i = j - 1; 
           } else {
-            // No children, just draw the level 1 row
             outerSegments.push(r);
           }
         } else if (lvl === 2) {
-           // Fallback for an orphaned level 2 row
            outerSegments.push(r);
         }
       }
@@ -343,11 +335,13 @@ $('#dupProfile').onclick = () => {
 
 $('#delProfile').onclick = () => {
   if (profiles.length > 1) {
-    profiles.splice(currentProfileIndex, 1);
-    currentProfileIndex = Math.max(0, currentProfileIndex - 1);
-    state = profiles[currentProfileIndex];
-    saveState();
-    renderEditor();
+    if (confirm("Are you sure you want to delete this profile? This cannot be undone.")) {
+      profiles.splice(currentProfileIndex, 1);
+      currentProfileIndex = Math.max(0, currentProfileIndex - 1);
+      state = profiles[currentProfileIndex];
+      saveState();
+      renderEditor();
+    }
   }
 };
 
