@@ -42,7 +42,7 @@ body{display:flex;justify-content:center}
 .dot{width:11px;height:11px;border-radius:50%;justify-self:start;margin-left:3px}
 .label,.pct{font-size:17px;line-height:1.2;font-weight:500;letter-spacing:-.2px;color:#000}.pct{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-variant-numeric:tabular-nums;text-align:right}
 .chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
-.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:4px;align-items:center;padding-right:110px}
+.detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:110px}
 
 /* Region Layout */
 .places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
@@ -83,8 +83,45 @@ body{display:flex;justify-content:center}
   <div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div><div id="editorList" class="editor-list"></div><button class="add-btn" id="addGroup">+ Add ancestry group</button><button class="apply-btn" id="apply">Apply changes</button><p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line. Colors are assigned automatically from the selected population. The visible palette has been calibrated against the supplied iPhone capture and additional official 23andMe mobile/marketing screenshots. This independent research prototype remains visibly labeled and is not affiliated with 23andMe.</p></div></aside>
 <script>
 const CATALOG={
-"European":{band:"#6cb5ff",text:"#000",groups:{
-"Western European":"#5b72bc","French":"#2d6fd4","Austrian & Southern German":"#5295e8","Swiss, Southwestern German & Western Austrian":"#387fe0","Dutch & Northern German":"#4185e4","Belgian, Rhinelander & Southern Dutch":"#5b72bc","British & Irish":"#387fe0","Scottish":"#6fa8ec","English":"#5a95e0","Irish":"#85b4f0","Welsh":"#4993ee","Nordic":"#3bb3af","Swedish":"#40d6ce","Finnish":"#20c7c1","Scandinavian":"#54a5de","Danish":"#4999d2","Icelandic":"#5bb0e4","Norwegian":"#4da4d9","Italian & Maltese":"#3955bd","Southern Italian":"#3955bd","Northern Italian":"#3955bd","Greek & Balkan":"#4348b6","Greek":"#4348b6","Bosnian, Croatian, Montenegrin & Serbian":"#393fc5","Spanish & Portuguese":"#3b46be","Canary Islander":"#2c3cc8","Andalusian, Asturian & Castilian":"#5360e0","Aragonese & Catalan":"#2f39c0","Portuguese & Galician":"#4d5bdc","Basque":"#3945ca","Central & Eastern European":"#3abfb8","Belarusian, Polish & Ukrainian":"#56b4a1","Czech, Hungarian, Slovak & Southern Polish":"#54dfc4","Estonian":"#3abfb8","Latvian":"#56b4a1","Lithuanian":"#56b4a1","Russian":"#56b4a1","Ashkenazi Jewish":"#00c5ee"}},
+"European":{band:"#81c1fb",text:"#000",groups:{
+"Western European":"#3d609f",
+"French":"#1c68df",
+"Austrian & Southern German":"#5295e8",
+"Swiss, Southwestern German & Western Austrian":"#387fe0",
+"Dutch & Northern German":"#508ae5",
+"Belgian, Rhinelander & Southern Dutch":"#5b72bc",
+"British & Irish":"#387fe0",
+"Scottish":"#6fa8ec",
+"English":"#5a95e0",
+"Irish":"#85b4f0",
+"Welsh":"#4993ee",
+"Nordic":"#44b1b5",
+"Swedish":"#40d6ce",
+"Finnish":"#1dcbc1",
+"Scandinavian":"#54a5de",
+"Danish":"#4999d2",
+"Icelandic":"#5bb0e4",
+"Norwegian":"#4da4d9",
+"Italian & Maltese":"#3955bd",
+"Southern Italian":"#3955bd",
+"Northern Italian":"#3955bd",
+"Greek & Balkan":"#4348b6",
+"Greek":"#4348b6",
+"Bosnian, Croatian, Montenegrin & Serbian":"#393fc5",
+"Spanish & Portuguese":"#3b46be",
+"Canary Islander":"#2c3cc8",
+"Andalusian, Asturian & Castilian":"#5360e0",
+"Aragonese & Catalan":"#2f39c0",
+"Portuguese & Galician":"#4d5bdc",
+"Basque":"#3945ca",
+"Central & Eastern European":"#459f93",
+"Belarusian, Polish & Ukrainian":"#4de2ba",
+"Czech, Hungarian, Slovak & Southern Polish":"#4ce1c4",
+"Estonian":"#3abfb8",
+"Latvian":"#56b4a1",
+"Lithuanian":"#58c3a9",
+"Russian":"#56b4a1",
+"Ashkenazi Jewish":"#19c3e4"}},
 "Central & South Asian":{band:"#8cf34c",text:"#2f3032",groups:{"Northern Indian & Pakistani":"#dfee28","Bengali & Northeast Indian":"#bbf366","Central Asian, Northern Indian & Pakistani":"#e8dc1b","Central Asian":"#e3dc50","Gujarati Patidar":"#e4bd15","Southern Indian Subgroup":"#cce022","Southern South Asian":"#bdd830","Malayali Subgroup":"#42c8b0","Southern Indian & Sri Lankan":"#3bd78b","Broadly Central & South Asian":"#7ab857"}},
 "Indigenous American":{band:"#f85bf3",text:"#fff",groups:{"North American":"#e5429b","Arctic North American":"#c728bd","Western North American":"#e626ad","Southern Mesoamerican":"#e228c6","Central Andean & Amazonian":"#e228c6","Northern Andean":"#d824bd","Indigenous American":"#18b7a8"}},
 "East Asian":{band:"#fbc387",text:"#292b2e",groups:{"Chinese":"#b14339","Southern Coastal Chinese":"#ee4d3e","Northern Chinese & Tibetan":"#e83827","Southern Chinese & Taiwanese":"#f44b41","Filipino & Austronesian":"#eea236","Filipino":"#e46b3f","Indonesian, Thai, Khmer & Myanma":"#d67a4d","Vietnamese":"#df8445","Japanese":"#e54273","Korean":"#ef2424","Northern Asian":"#c6654e","Manchurian & Mongolian":"#da5c43","Siberian":"#ec785c","Broadly Northern Asian":"#fa8566","Broadly East Asian":"#c27766"}},
