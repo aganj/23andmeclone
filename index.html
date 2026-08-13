@@ -70,7 +70,6 @@ body{display:flex;justify-content:center}
 <button class="prototype-mark" id="openPanel">RESEARCH PROTOTYPE · NOT 23ANDME</button>
 <aside class="panel" id="panel"><div class="panel-head"><h2>Customize ancestry results</h2><button id="close">Close</button></div><div class="panel-body">
 
-  <!-- NEW MULTI-PROFILE UI -->
   <label class="field" style="margin-bottom:6px">Saved Profile
     <select id="profileSelect"></select>
   </label>
@@ -104,13 +103,12 @@ const DEFAULT=[
 {top:"Melanesian",group:"Melanesian",pct:0.5,level:1,regions:[]}
 ];
 
-// ADVANCED DATA PERSISTENCE WITH MULTIPLE PROFILES
 let profiles = [];
 let currentProfileIndex = 0;
 
 try {
   const savedProfiles = localStorage.getItem('ancestryProfiles');
-  const oldState = localStorage.getItem('ancestryState'); // Legacy fallback
+  const oldState = localStorage.getItem('ancestryState'); 
   
   if (savedProfiles) {
     profiles = JSON.parse(savedProfiles);
@@ -118,7 +116,7 @@ try {
     if (currentProfileIndex >= profiles.length || isNaN(currentProfileIndex)) currentProfileIndex = 0;
   } else if (oldState) {
     profiles = [JSON.parse(oldState)];
-    localStorage.removeItem('ancestryState'); // Clean up old system
+    localStorage.removeItem('ancestryState');
   } else {
     profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT)}];
   }
@@ -134,7 +132,6 @@ function saveState() {
   localStorage.setItem('ancestryCurrentIndex', currentProfileIndex.toString());
 }
 
-// Syncs currently typed values back into the active object so they aren't lost when switching profiles
 function syncInputsToState() {
   state.name = $('#nameInput').value.trim() || 'Sample User';
   state.initials = $('#initialsInput').value.trim() || state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
@@ -179,9 +176,7 @@ function render(){
        if(!r.regions.length){
            html+=`<div class="row level-${lvl}"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div>`
        } else {
-           // Added .trim() parsing so inputs like "Yerevan , Armenia" correctly format to "Yerevan, Armenia"
            html+=`<div class="detail level-${lvl}"><div class="detail-head"><span class="dot" style="background:${color}"></span><span class="label">${esc(r.group)}</span><span class="pct">${fmt(r.pct)}</span>${chev}</div><div class="places">${r.regions.map((v,idx)=>{
-             // Script cleans extra whitespace between words automatically
              const cleanV = v.trim().replace(/\s+/g, ' ');
              const p = cleanV.split(',');
              return `<p>${idx<2&&p.length>1?`<strong>${esc(p[0].trim())}</strong>, ${esc(p.slice(1).join(',').trim())}`:esc(cleanV)}</p>`
@@ -193,7 +188,6 @@ function render(){
  $('#results').innerHTML=html;
  renderPie();
 
- // Bind drag and drop events
  document.querySelectorAll('#results section').forEach(sec => {
    const top = sec.dataset.top;
    sec.ondragstart = e => { e.dataTransfer.setData('text/plain', top); sec.style.opacity = '0.5'; };
@@ -209,7 +203,7 @@ function render(){
        const insertIdx = state.items.findIndex(x => x.top === top);
        if(insertIdx >= 0) state.items.splice(insertIdx, 0, ...draggedItems);
        else state.items.push(...draggedItems);
-       saveState(); // Save to local storage on reorder
+       saveState();
        render();
      }
    };
@@ -218,9 +212,7 @@ function render(){
 }
 
 function renderPie(){
-  // Pushed outward: inner ring extends to 46.5 outer edge
   const rIn = 32.5, cIn = 2 * Math.PI * rIn; 
-  // Pushed outward: outer ring extends to 46.5 outer edge
   const rOut = 35.5, cOut = 2 * Math.PI * rOut; 
   
   let offsetIn = 0, offsetOut = 0;
@@ -240,29 +232,62 @@ function renderPie(){
       innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="28" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
       offsetIn += dashIn;
       
-      if (l1Rows.length === 0) {
-        offsetOut += (cOut * bandAmt) / 100;
-      } else {
-        for(const r of l1Rows) {
-          const amt = Math.max(0, Number(r.pct || 0));
-          if(amt > 0) {
-            const dashOut = (cOut * amt) / 100;
-            const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
-            const color = CATALOG[top].groups[r.group] || CATALOG[top].band;
-            outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
-            offsetOut += dashOut;
+      // NEW LOGIC: Collect specific Level 2 children to draw on the outer ring
+      let outerSegments = [];
+      for (let i = 0; i < rowsForTop.length; i++) {
+        const r = rowsForTop[i];
+        const lvl = parseInt(r.level, 10) || 1;
+        
+        if (lvl === 1) {
+          let childSum = 0;
+          let children = [];
+          let j = i + 1;
+          
+          // Look ahead to find all Level 2 children nested under this Level 1 parent
+          while (j < rowsForTop.length && (parseInt(rowsForTop[j].level, 10) || 1) === 2) {
+            children.push(rowsForTop[j]);
+            childSum += parseFloat(rowsForTop[j].pct || 0);
+            j++;
           }
+          
+          if (children.length > 0) {
+            // Push the specific children to the pie chart
+            outerSegments.push(...children);
+            
+            // If the parent percentage is bigger than the sum of its children, 
+            // the remaining amount belongs to the parent (e.g. "Broadly NWA")
+            let diff = parseFloat(r.pct || 0) - childSum;
+            if (diff > 0.05) {
+              outerSegments.push({ group: r.group, pct: diff });
+            }
+            // Skip over the children we just processed
+            i = j - 1; 
+          } else {
+            // No children, just draw the level 1 row
+            outerSegments.push(r);
+          }
+        } else if (lvl === 2) {
+           // Fallback for an orphaned level 2 row
+           outerSegments.push(r);
+        }
+      }
+
+      for(const seg of outerSegments) {
+        const amt = Math.max(0, Number(seg.pct || 0));
+        if(amt > 0) {
+          const dashOut = (cOut * amt) / 100;
+          const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
+          const color = CATALOG[top].groups[seg.group] || CATALOG[top].band;
+          outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
+          offsetOut += dashOut;
         }
       }
     }
   }
 
   let svg = '';
-  // Background at 48.5 minus the pie's outer edge at 46.5 leaves exactly a crisp 2-unit outer white border
   svg += `<circle cx="50" cy="50" r="48.5" fill="#fff"/>`;
   svg += `<g transform="rotate(-90 50 50)">${innerPaths}${outerPaths}</g>`;
-  
-  // Center hole stroke reduced from 3.5 down to 2, balancing the inner and outer white outlines perfectly
   svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="2"/>`;
   svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
 
@@ -288,7 +313,6 @@ function renderEditor(){
  })
 }
 
-// PROFILE MANAGEMENT EVENT LISTENERS
 $('#profileSelect').onchange = (e) => {
   syncInputsToState();
   currentProfileIndex = Number(e.target.value);
@@ -327,8 +351,6 @@ $('#delProfile').onclick = () => {
   }
 };
 
-
-// Open editor smoothly when clicking on the results list
 $('#results').onclick = (e) => { 
   if (e.defaultPrevented) return;
   renderEditor(); 
@@ -337,7 +359,6 @@ $('#results').onclick = (e) => {
 
 $('#openPanel').onclick=()=>{renderEditor();$('#panel').classList.add('open')};
 
-// SMART ADD GROUP LOGIC: Dynamically inherits the global population from the previous block
 $('#addGroup').onclick=()=>{
   let top = Object.keys(CATALOG)[0];
   if (state.items.length > 0) {
@@ -349,7 +370,6 @@ $('#addGroup').onclick=()=>{
 
 $('#close').onclick=()=>$('#panel').classList.remove('open');
 
-// Save the state to localStorage every time the user applies their changes
 $('#apply').onclick=()=>{
   syncInputsToState();
   saveState();
@@ -357,7 +377,6 @@ $('#apply').onclick=()=>{
   $('#panel').classList.remove('open');
 };
 
-// EXPORT TO HIGH-QUALITY JPEG
 $('#downloadBtn').onclick = async () => {
   $('.prototype-mark').style.display = 'none';
   
@@ -365,7 +384,6 @@ $('#downloadBtn').onclick = async () => {
     scale: 4, 
     useCORS: true, 
     backgroundColor: '#fff'
-    // Removed the CSS onclone hack entirely so letter kerning remains natively perfect
   });
   
   $('.prototype-mark').style.display = 'block';
@@ -379,7 +397,6 @@ $('#downloadBtn').onclick = async () => {
           title: 'Ancestry Composition',
         });
       } catch (err) {
-        // User canceled the share sheet, fail gracefully
       }
     } else {
       const link = document.createElement('a');
@@ -387,7 +404,7 @@ $('#downloadBtn').onclick = async () => {
       link.href = URL.createObjectURL(blob);
       link.click();
     }
-  }, 'image/jpeg', 1.0); // Highest quality JPEG export
+  }, 'image/jpeg', 1.0);
 };
 
 render();
