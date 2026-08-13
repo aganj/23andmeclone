@@ -26,8 +26,9 @@ body{display:flex;justify-content:center}
 
 /* Row typography and tight hierarchy indentation */
 .row{position:relative;min-height:46px;display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:4px;align-items:center;}
-.row.level-1 { padding: 0 110px 0 14px; }
-.row.level-2 { padding: 0 110px 0 37px; }
+/* Added 10px top/bottom padding to give multi-line labels like "Czech..." proper breathing room */
+.row.level-1 { padding: 10px 110px 10px 14px; }
+.row.level-2 { padding: 10px 110px 10px 37px; }
 
 .detail{position:relative;padding-top:12px;padding-bottom:12px;padding-right:15px;}
 .detail.level-1 { padding-left: 14px; }
