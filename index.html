@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ancestry Composition — Research Prototype</title>
+<title>Ancestry Composition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:38px;--chevron-right:12px}
@@ -41,7 +41,6 @@ body{display:flex;justify-content:center}
 .places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
 .places p{margin:0 0 10px;word-spacing:-0.5px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
 
-.prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
 #results section {cursor: grab; transition: opacity 0.2s ease;}
 #results section:active {cursor: grabbing;}
@@ -60,7 +59,7 @@ body{display:flex;justify-content:center}
 @media(max-width:380px){:root{--value-right:34px;--chevron-right:10px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
 <main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" width="100%" height="100%"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round" width="100%" height="100%"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
-<section class="profile">
+<section class="profile" id="profileArea">
   <div class="handle"></div>
   <div class="pie">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" shape-rendering="geometricPrecision" id="pieSegments"></svg>
@@ -69,7 +68,6 @@ body{display:flex;justify-content:center}
   <span class="total">100%</span>
 </section>
 <div id="results" title="Click anywhere to edit results"></div></main>
-<button class="prototype-mark" id="openPanel">RESEARCH PROTOTYPE · NOT 23ANDME</button>
 
 <aside class="panel" id="panel">
   <div class="panel-head"><h2 id="panelTitle">Customize ancestry results</h2><button id="close">Close</button></div>
@@ -173,19 +171,14 @@ const DEFAULT_PROFILE=[
 let currentCatalog = JSON.parse(localStorage.getItem('ancestryCatalog')) || structuredClone(DEFAULT_CATALOG);
 let profiles = [];
 let currentProfileIndex = 0;
-let editCat = []; // Temp holder for DB Editor
+let editCat = []; 
 
 try {
   const savedProfiles = localStorage.getItem('ancestryProfiles');
-  const oldState = localStorage.getItem('ancestryState'); 
-  
   if (savedProfiles) {
     profiles = JSON.parse(savedProfiles);
     currentProfileIndex = parseInt(localStorage.getItem('ancestryCurrentIndex') || '0', 10);
     if (currentProfileIndex >= profiles.length || isNaN(currentProfileIndex)) currentProfileIndex = 0;
-  } else if (oldState) {
-    profiles = [JSON.parse(oldState)];
-    localStorage.removeItem('ancestryState');
   } else {
     profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT_PROFILE)}];
   }
@@ -238,9 +231,7 @@ function render(){
    html+=`<section draggable="true" data-top="${esc(top)}"><div class="band" style="background:${meta.band};color:${meta.text}"><span class="title">${esc(top)}</span><span class="value">${fmt(bandTotal)}</span></div>`;
    for(const r of rows){
        const color = meta.groups[r.group] || meta.band || "#888888";
-       
        const chev='<img class="chev" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDE0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjN2M3Y2MiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xIDFsNiA2LTYgNiIvPjwvc3ZnPg==" alt="">';
-       
        const lvl = parseInt(r.level, 10) || 1;
        
        if(!r.regions.length){
@@ -432,11 +423,15 @@ document.querySelector('#delProfile').onclick = () => {
   }
 };
 
-document.querySelector('#results').onclick = (e) => { 
-  if (e.defaultPrevented) return;
+const openPanelHandler = (e) => { 
+  if (e && e.defaultPrevented) return;
   renderEditor(); 
   document.querySelector('#panel').classList.add('open'); 
 };
+
+// Opening panel by clicking either the results block or the profile header area
+document.querySelector('#results').onclick = openPanelHandler;
+document.querySelector('#profileArea').onclick = openPanelHandler;
 
 document.querySelector('#addGroup').onclick=()=>{
   let top = Object.keys(currentCatalog)[0];
@@ -457,9 +452,18 @@ document.querySelector('#apply').onclick=()=>{
 };
 
 document.querySelector('#downloadBtn').onclick = async () => {
-  document.querySelector('.prototype-mark').style.display = 'none';
-  const canvas = await html2canvas(document.querySelector('#captureTarget'), { scale: 4, useCORS: true, backgroundColor: '#fff' });
-  document.querySelector('.prototype-mark').style.display = 'block';
+  const canvas = await html2canvas(document.querySelector('#captureTarget'), { 
+    scale: 4, 
+    useCORS: true, 
+    backgroundColor: '#fff',
+    onclone: (clonedDoc) => {
+      // OVERRIDE: Swaps out Apple System fonts strictly during the image clone to prevent html2canvas kerning/overlapping bugs.
+      const style = clonedDoc.createElement('style');
+      style.innerHTML = '* { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; }';
+      clonedDoc.head.appendChild(style);
+    }
+  });
+  
   canvas.toBlob(async (blob) => {
     if (navigator.share) {
       const file = new File([blob], 'Ancestry-Composition.jpg', { type: 'image/jpeg' });
