@@ -53,10 +53,9 @@ body{display:flex;justify-content:center}
 .db-summary { padding: 12px; font-weight: 700; cursor: pointer; background: #fdfdfd; user-select: none; }
 .db-summary:hover { background: #f7f7f9; }
 .db-content { padding: 12px; border-top: 1px solid #e7e7e9; display: grid; gap: 8px; }
-.db-row { display: grid; grid-template-columns: 1fr 40px 30px; gap: 6px; align-items: center; }
-input[type="color"] { border: 1px solid #cfcfd4; border-radius: 6px; padding: 0; background: none; cursor: pointer; height: 32px; width: 100%; }
-input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+.db-row { display: grid; grid-template-columns: 1fr 16px 85px 30px; gap: 6px; align-items: center; }
+.hex-input { border: 1px solid #cfcfd4; border-radius: 6px; padding: 6px; width: 100%; font-family: monospace; font-size: 13px; text-transform: uppercase; }
+.swatch { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); display: inline-block; vertical-align: middle; }
 
 @media(max-width:380px){:root{--value-right:34px;--chevron-right:10px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
@@ -98,10 +97,10 @@ input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
 
     <!-- NEW DATABASE EDITOR VIEW -->
     <div id="dbEditorView" style="display:none;">
-      <p class="hint" style="margin-top:0; margin-bottom:12px; font-size:12px;">Edit groups, names, and RGB colors here. Changes apply globally to the dropdowns for all profiles.</p>
+      <p class="hint" style="margin-top:0; margin-bottom:12px; font-size:12px;">Edit groups, names, and HEX colors here. Changes apply live to your results immediately!</p>
       <div id="dbList" class="editor-list"></div>
       <button id="addDbRegion" class="add-btn" style="margin-top:12px;">+ Add Broad Region</button>
-      <button id="saveDbBtn" class="apply-btn" style="margin-top:12px;">Save Database</button>
+      <button id="closeDbBtn" class="apply-btn" style="margin-top:12px;">Done (Return to Editor)</button>
       <button id="resetDbBtn" class="remove" style="width:100%; margin-top:12px;">Reset to 23andMe Defaults</button>
     </div>
 
@@ -109,7 +108,7 @@ input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
 </aside>
 
 <script>
-// Master default catalog (Ensured all colors are 6-character hexes for HTML color pickers)
+// Master default catalog
 const DEFAULT_CATALOG={
 "European":{band:"#81c1fb",text:"#000000",groups:{
 "Western European":"#3d609f",
@@ -225,8 +224,7 @@ function render(){
    const rows = state.items.filter(x=>x.top===top);
    if(!rows.length)continue;
    
-   // Fallback for missing/deleted DB categories to prevent crashing
-   const meta = currentCatalog[top] || {band:"#cccccc", text:"#000000", groups:{}};
+   const meta = currentCatalog[top] || {band:"#cccccc", text:"#ffffff", groups:{}};
    
    const level1Rows = rows.filter(r => parseInt(r.level, 10) === 1);
    let bandTotal = 0;
@@ -340,7 +338,7 @@ function renderPie(){
         if(amt > 0) {
           const dashOut = (cOut * amt) / 100;
           const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
-          const color = meta.groups[seg.group] || meta.band;
+          const color = meta.groups[seg.group] || meta.band || "#888888";
           outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
           offsetOut += dashOut;
         }
@@ -390,7 +388,6 @@ function renderEditor(){
  })
 }
 
-// PROFILE EVENT LISTENERS
 document.querySelector('#profileSelect').onchange = (e) => {
   syncInputsToState();
   currentProfileIndex = Number(e.target.value);
@@ -477,13 +474,13 @@ document.querySelector('#downloadBtn').onclick = async () => {
 };
 
 // ==========================================
-// DATABASE EDITOR LOGIC
+// REACTIVE DATABASE EDITOR LOGIC
 // ==========================================
 
 function catToEditArr(cat) {
   return Object.keys(cat).map(k => ({
-    name: k, band: cat[k].band, text: cat[k].text,
-    groups: Object.keys(cat[k].groups).map(g => ({ name: g, color: cat[k].groups[g] }))
+    id: k, name: k, band: cat[k].band, text: cat[k].text,
+    groups: Object.keys(cat[k].groups).map(g => ({ id: g, name: g, color: cat[k].groups[g] }))
   }));
 }
 
@@ -493,9 +490,19 @@ function editArrToCat(arr) {
     if(!r.name.trim()) return;
     let gOut = {};
     r.groups.forEach(g => { if(g.name.trim()) gOut[g.name.trim()] = g.color; });
-    out[r.name.trim()] = { band: r.band, text: r.text, groups: gOut };
+    out[r.name.trim()] = { band: r.band, text: r.text || '#ffffff', groups: gOut };
   });
   return out;
+}
+
+function updateProfileNames(key, oldVal, newVal) {
+   if(oldVal === newVal || !newVal.trim()) return;
+   profiles.forEach(prof => {
+      prof.items.forEach(item => {
+         if(item[key] === oldVal) item[key] = newVal;
+      });
+   });
+   saveState();
 }
 
 function renderDb() {
@@ -503,16 +510,17 @@ function renderDb() {
     <details class="db-region">
       <summary class="db-summary">${esc(reg.name) || 'Unnamed Region'} (✏️ Click to edit)</summary>
       <div class="db-content">
-        <div style="display:flex; gap:6px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #cfcfd4;">
+        <div style="display:flex; gap:6px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #cfcfd4; align-items:center;">
           <input value="${esc(reg.name)}" class="r-name" data-r="${r}" style="flex:1; border:1px solid #cfcfd4; border-radius:6px; padding:6px;" placeholder="Region Name">
-          <input type="color" value="${reg.band}" class="r-band color-swatch" data-r="${r}" style="width:36px" title="Band Color">
-          <input type="color" value="${reg.text}" class="r-text color-swatch" data-r="${r}" style="width:36px" title="Text Color">
+          <span class="swatch" style="background:${esc(reg.band)}"></span>
+          <input type="text" value="${esc(reg.band)}" class="r-band hex-input" data-r="${r}" placeholder="#Hex" maxlength="7">
           <button type="button" class="del-r remove" data-r="${r}" style="padding:6px 10px; border-radius:6px;">X</button>
         </div>
         ${reg.groups.map((grp, g) => `
           <div class="db-row">
              <input value="${esc(grp.name)}" class="g-name" data-r="${r}" data-g="${g}" style="border:1px solid #cfcfd4; border-radius:6px; padding:6px;" placeholder="Group Name">
-             <input type="color" value="${grp.color}" class="g-color color-swatch" data-r="${r}" data-g="${g}">
+             <span class="swatch" style="background:${esc(grp.color)}"></span>
+             <input type="text" value="${esc(grp.color)}" class="g-color hex-input" data-r="${r}" data-g="${g}" placeholder="#Hex" maxlength="7">
              <button type="button" class="del-g remove" data-r="${r}" data-g="${g}" style="padding:6px 10px; border-radius:6px;">X</button>
           </div>
         `).join('')}
@@ -530,49 +538,78 @@ document.querySelector('#openDbBtn').onclick = () => {
   document.querySelector('#dbEditorView').style.display = 'block';
 };
 
-document.querySelector('#saveDbBtn').onclick = () => {
-  currentCatalog = editArrToCat(editCat);
-  localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
+document.querySelector('#closeDbBtn').onclick = () => {
   document.querySelector('#panelTitle').textContent = "Customize ancestry results";
   document.querySelector('#dbEditorView').style.display = 'none';
   document.querySelector('#profileEditorView').style.display = 'block';
   renderEditor();
-  render();
 };
 
 document.querySelector('#resetDbBtn').onclick = () => {
   if (confirm("Reset the entire population database to 23andMe defaults? All custom regions and colors will be lost.")) {
     currentCatalog = structuredClone(DEFAULT_CATALOG);
+    localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
     editCat = catToEditArr(currentCatalog);
     renderDb();
+    render();
   }
 };
 
 document.querySelector('#addDbRegion').onclick = () => {
-  editCat.push({name: 'New Broad Region', band: '#cccccc', text: '#000000', groups: [{name: 'New Group', color: '#888888'}]});
+  let newName = 'New Broad Region';
+  editCat.push({id: newName, name: newName, band: '#cccccc', text: '#ffffff', groups: [{id: 'New Group', name: 'New Group', color: '#888888'}]});
+  currentCatalog = editArrToCat(editCat);
+  localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
   renderDb();
 };
 
-// Event Delegation for DB Editor inputs and buttons
-document.querySelector('#dbList').addEventListener('change', (e) => {
+// LIVE REACTIVE UPDATE ENGINE
+document.querySelector('#dbList').addEventListener('input', (e) => {
   const trg = e.target;
   const r = trg.dataset.r, g = trg.dataset.g;
-  if (trg.classList.contains('r-name')) editCat[r].name = trg.value;
-  if (trg.classList.contains('r-band')) editCat[r].band = trg.value;
-  if (trg.classList.contains('r-text')) editCat[r].text = trg.value;
-  if (trg.classList.contains('g-name')) editCat[r].groups[g].name = trg.value;
-  if (trg.classList.contains('g-color')) editCat[r].groups[g].color = trg.value;
+  
+  if (trg.classList.contains('r-name')) {
+     updateProfileNames('top', editCat[r].id, trg.value);
+     editCat[r].name = trg.value;
+     editCat[r].id = trg.value;
+  }
+  if (trg.classList.contains('r-band')) {
+     editCat[r].band = trg.value;
+     trg.previousElementSibling.style.background = trg.value;
+  }
+  if (trg.classList.contains('g-name')) {
+     updateProfileNames('group', editCat[r].groups[g].id, trg.value);
+     editCat[r].groups[g].name = trg.value;
+     editCat[r].groups[g].id = trg.value;
+  }
+  if (trg.classList.contains('g-color')) {
+     editCat[r].groups[g].color = trg.value;
+     trg.previousElementSibling.style.background = trg.value;
+  }
+  
+  // Rebuild catalog and instantly update the live chart preview
+  currentCatalog = editArrToCat(editCat);
+  localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
+  render(); 
 });
 
 document.querySelector('#dbList').addEventListener('click', (e) => {
   const trg = e.target;
   const r = trg.dataset.r, g = trg.dataset.g;
+  let changed = false;
   if (trg.classList.contains('del-r')) {
-    if(confirm("Delete this broad region and all its sub-groups?")) { editCat.splice(r, 1); renderDb(); }
+    if(confirm("Delete this broad region and all its sub-groups?")) { editCat.splice(r, 1); changed = true; }
   } else if (trg.classList.contains('del-g')) {
-    editCat[r].groups.splice(g, 1); renderDb();
+    editCat[r].groups.splice(g, 1); changed = true;
   } else if (trg.classList.contains('add-g')) {
-    editCat[r].groups.push({name: 'New Group', color: '#888888'}); renderDb();
+    editCat[r].groups.push({id: 'New Group', name: 'New Group', color: '#888888'}); changed = true;
+  }
+  
+  if (changed) {
+     currentCatalog = editArrToCat(editCat);
+     localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
+     renderDb();
+     render();
   }
 });
 
