@@ -6,7 +6,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:38px;--chevron-right:12px}
-/* Changed text-rendering to auto to prevent html2canvas kerning bugs globally without hacks */
 *{box-sizing:border-box; text-rendering:auto; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
 html,body{margin:0;background:#eceff2;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif}
 body{display:flex;justify-content:center}
@@ -14,19 +13,15 @@ body{display:flex;justify-content:center}
 .topbar{height:67px;position:relative;background:linear-gradient(#dce1eb,#ced5e2);overflow:hidden}.topbar:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 145px 48px at 30% 104%,rgba(255,255,255,.7) 0 55%,transparent 56%),radial-gradient(ellipse 120px 48px at 86% 100%,rgba(255,255,255,.3) 0 52%,transparent 53%)}
 .nav{position:relative;z-index:1;height:67px;display:grid;grid-template-columns:49px 1fr 111px;align-items:center;gap:8px;padding:7px 17px 7px 18px}.circle,.capsule{border:1px solid rgba(255,255,255,.96);background:rgba(255,255,255,.88);box-shadow:0 2px 5px rgba(0,0,0,.09)}.circle{width:49px;height:49px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer}.capsule{height:49px;border-radius:26px;display:grid;grid-template-columns:1fr 1fr}.capsule button{border:0;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}.page-title{font-size:20px;line-height:1;font-weight:600;text-align:center;white-space:nowrap;letter-spacing:-.4px}.circle svg{width:29px;height:29px}.capsule svg{width:27px;height:27px}
 
-/* Profile Section - Perfected height and thinner, darker handle */
 .profile{height:74px;position:relative;display:flex;align-items:center;justify-content:center}
 .handle{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:32px;height:2px;border-radius:2px;background:#3a3a3c}
 .pie{position:absolute;left:16px;top:-12px;width:81px;height:81px;border-radius:50%;filter:drop-shadow(0 2px 5px rgba(0,0,0,.15))}.pie svg{width:100%;height:100%;display:block}
 .name{font-size:17px;font-weight:700;letter-spacing:-.42px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 220px);text-align:center;z-index:2}
 .total{position:absolute;right:var(--value-right);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px;white-space:nowrap;z-index:2}
 
-/* Band typography */
 .band{min-height:40px;padding:0 125px 0 18px;display:flex;align-items:center;position:relative;font-size:17px;font-weight:700;letter-spacing:-.3px}.band .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.band .value{position:absolute;right:var(--value-right);top:50%;transform:translateY(-50%);width:72px;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
 
-/* Row typography and tight hierarchy indentation */
 .row{position:relative;min-height:46px;display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:4px;align-items:center;}
-/* Added 10px top/bottom padding to give multi-line labels proper breathing room */
 .row.level-1 { padding: 10px 110px 10px 14px; }
 .row.level-2 { padding: 10px 110px 10px 37px; }
 
@@ -36,8 +31,6 @@ body{display:flex;justify-content:center}
 
 .row.level-1:after, .detail.level-1:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:15px; }
 .row.level-2:after, .detail.level-2:after { content:""; position:absolute; right:15px; bottom:0; height:1px; background:var(--hair); left:15px; }
-
-/* Remove the line from the last item in the group */
 .row:last-child:after, .detail:last-child:after { display: none; }
 
 .dot{width:11px;height:11px;border-radius:50%;justify-self:start;margin-left:3px}
@@ -45,9 +38,7 @@ body{display:flex;justify-content:center}
 .chev{position:absolute;right:var(--chevron-right);top:50%;transform:translateY(-50%);width:9px;height:14px}
 .detail-head{position:relative;width:calc(100% + 15px);display:grid;grid-template-columns:24px minmax(0,1fr);column-gap:3px;align-items:center;padding-right:110px}
 
-/* Region Layout */
 .places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
-/* Restored original 10px vertical rhythm and tightened horizontal word spacing slightly */
 .places p{margin:0 0 10px;word-spacing:-0.5px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
 
 .prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
@@ -56,6 +47,17 @@ body{display:flex;justify-content:center}
 #results section:active {cursor: grabbing;}
 #results section.over {border-top: 2px dashed #000; border-bottom: 2px dashed #000; opacity: 0.7;}
 #results {cursor: pointer;} 
+
+/* DB Editor Custom Styles */
+.db-region { background: #fff; border: 1px solid #d8d8dc; border-radius: 11px; margin-bottom: 10px; overflow: hidden; }
+.db-summary { padding: 12px; font-weight: 700; cursor: pointer; background: #fdfdfd; user-select: none; }
+.db-summary:hover { background: #f7f7f9; }
+.db-content { padding: 12px; border-top: 1px solid #e7e7e9; display: grid; gap: 8px; }
+.db-row { display: grid; grid-template-columns: 1fr 40px 30px; gap: 6px; align-items: center; }
+input[type="color"] { border: 1px solid #cfcfd4; border-radius: 6px; padding: 0; background: none; cursor: pointer; height: 32px; width: 100%; }
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+
 @media(max-width:380px){:root{--value-right:34px;--chevron-right:10px}.page-title{font-size:18px}.band{font-size:17px}.band .value{font-size:17px}.label,.pct{font-size:17px}.total{font-size:17px}}
 </style></head><body>
 <main class="app" id="captureTarget"><header class="topbar"><div class="nav"><button class="circle" aria-label="Back"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.2" stroke-linecap="round" width="100%" height="100%"><path d="M15.5 4.5 8 12l7.5 7.5"/></svg></button><div class="page-title">Ancestry Composition</div><div class="capsule"><button id="downloadBtn" aria-label="Export Image"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.25" stroke-linecap="round" width="100%" height="100%"><path d="M12 15.8V3.2m-4.4 4.2L12 3l4.4 4.4M6.1 11.2H4.5v8.2h15v-8.2h-1.6"/></svg></button><button><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></button></div></div></header>
@@ -69,22 +71,47 @@ body{display:flex;justify-content:center}
 </section>
 <div id="results" title="Click anywhere to edit results"></div></main>
 <button class="prototype-mark" id="openPanel">RESEARCH PROTOTYPE · NOT 23ANDME</button>
-<aside class="panel" id="panel"><div class="panel-head"><h2>Customize ancestry results</h2><button id="close">Close</button></div><div class="panel-body">
 
-  <label class="field" style="margin-bottom:6px">Saved Profile
-    <select id="profileSelect"></select>
-  </label>
-  <div class="card-actions" style="margin-top:0;margin-bottom:14px">
-    <button class="icon-btn" id="newProfile" type="button" style="flex:1;width:auto">New</button>
-    <button class="icon-btn" id="dupProfile" type="button" style="flex:1;width:auto">Duplicate</button>
-    <button class="remove" id="delProfile" type="button" style="flex:1">Delete</button>
+<aside class="panel" id="panel">
+  <div class="panel-head"><h2 id="panelTitle">Customize ancestry results</h2><button id="close">Close</button></div>
+  <div class="panel-body">
+
+    <!-- STANDARD PROFILE EDITOR VIEW -->
+    <div id="profileEditorView">
+      <label class="field" style="margin-bottom:6px">Saved Profile
+        <select id="profileSelect"></select>
+      </label>
+      <div class="card-actions" style="margin-top:0;margin-bottom:8px">
+        <button class="icon-btn" id="newProfile" type="button" style="flex:1;width:auto">New</button>
+        <button class="icon-btn" id="dupProfile" type="button" style="flex:1;width:auto">Duplicate</button>
+        <button class="remove" id="delProfile" type="button" style="flex:1">Delete</button>
+      </div>
+      <button class="icon-btn" id="openDbBtn" type="button" style="width:100%; margin-bottom:14px; background:#d7d7dc;">⚙️ Manage Populations & Colors</button>
+      <hr style="border:0;border-top:1px solid #d8d8dc;margin:0 -12px 14px">
+
+      <div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div>
+      <div id="editorList" class="editor-list"></div>
+      <button class="add-btn" id="addGroup">+ Add ancestry group</button>
+      <button class="apply-btn" id="apply">Apply changes</button>
+      <p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line.</p>
+    </div>
+
+    <!-- NEW DATABASE EDITOR VIEW -->
+    <div id="dbEditorView" style="display:none;">
+      <p class="hint" style="margin-top:0; margin-bottom:12px; font-size:12px;">Edit groups, names, and RGB colors here. Changes apply globally to the dropdowns for all profiles.</p>
+      <div id="dbList" class="editor-list"></div>
+      <button id="addDbRegion" class="add-btn" style="margin-top:12px;">+ Add Broad Region</button>
+      <button id="saveDbBtn" class="apply-btn" style="margin-top:12px;">Save Database</button>
+      <button id="resetDbBtn" class="remove" style="width:100%; margin-top:12px;">Reset to 23andMe Defaults</button>
+    </div>
+
   </div>
-  <hr style="border:0;border-top:1px solid #d8d8dc;margin:0 -12px 14px">
+</aside>
 
-  <div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div><div id="editorList" class="editor-list"></div><button class="add-btn" id="addGroup">+ Add ancestry group</button><button class="apply-btn" id="apply">Apply changes</button><p class="hint">Choose from the current 23andMe ancestry hierarchy. Percentages may use decimals. Add optional recent regions as one entry per line. Colors are assigned automatically from the selected population. The visible palette has been calibrated against the supplied iPhone capture and additional official 23andMe mobile/marketing screenshots. This independent research prototype remains visibly labeled and is not affiliated with 23andMe.</p></div></aside>
 <script>
-const CATALOG={
-"European":{band:"#81c1fb",text:"#000",groups:{
+// Master default catalog (Ensured all colors are 6-character hexes for HTML color pickers)
+const DEFAULT_CATALOG={
+"European":{band:"#81c1fb",text:"#000000",groups:{
 "Western European":"#3d609f",
 "French":"#1c68df",
 "Austrian & Southern German":"#5189e5",
@@ -126,14 +153,14 @@ const CATALOG={
 "Russian":"#56b4a1",
 "Ashkenazi Jewish":"#19c3e4"}},
 "Central & South Asian":{band:"#a1f55a",text:"#2f3032",groups:{"Northern Indian & Pakistani":"#cbe638","Bengali & Northeast Indian":"#a8ee56","Central Asian, Northern Indian & Pakistani":"#d6e336","Central Asian":"#e2da38","Gujarati Patidar":"#cfd62d","Southern Indian Subgroup":"#3fce6a","Southern South Asian":"#82d85b","Malayali Subgroup":"#4ed7a8","Southern Indian & Sri Lankan":"#3be093","Broadly Central & South Asian":"#86c75c"}},
-"Indigenous American":{band:"#f85bf3",text:"#fff",groups:{"North American":"#e5429b","Arctic North American":"#c728bd","Western North American":"#e626ad","Southern Mesoamerican":"#e228c6","Central Andean & Amazonian":"#e228c6","Northern Andean":"#d824bd","Indigenous American":"#18b7a8"}},
+"Indigenous American":{band:"#f85bf3",text:"#ffffff",groups:{"North American":"#e5429b","Arctic North American":"#c728bd","Western North American":"#e626ad","Southern Mesoamerican":"#e228c6","Central Andean & Amazonian":"#e228c6","Northern Andean":"#d824bd","Indigenous American":"#18b7a8"}},
 "East Asian":{band:"#fbc387",text:"#292b2e",groups:{"Chinese":"#b14339","Southern Coastal Chinese":"#ee4d3e","Northern Chinese & Tibetan":"#e83827","Southern Chinese & Taiwanese":"#f44b41","Filipino & Austronesian":"#eea236","Filipino":"#e46b3f","Indonesian, Thai, Khmer & Myanma":"#d67a4d","Vietnamese":"#df8445","Japanese":"#e54273","Korean":"#ef2424","Northern Asian":"#c6654e","Manchurian & Mongolian":"#da5c43","Siberian":"#eb6c4f","Broadly Northern Asian":"#fa8566","Broadly East Asian":"#c27766"}},
-"Sub-Saharan African":{band:"#a25cf5",text:"#fff",groups:{"West African":"#643ecc","Nigerian":"#734be0","Senegambian & Guinean":"#643ecc","Ghanaian, Liberian & Sierra Leonean":"#734be0","Congolese & Southern East African":"#643ecc","Angolan & Congolese":"#734be0","Southern East African":"#7a52e5","African Hunter-Gatherer":"#643ecc","Northern East African":"#c53e70","Ethiopian & Eritrean":"#b83368","Sudanese":"#6819d1","Broadly Sub-Saharan African":"#da6972"}},
-"Western Asian & North African":{band:"#a07cf0",text:"#fff",groups:{"Northern West Asian":"#443b96","Iranian, Caucasian & Mesopotamian":"#6c59e6","Arab, Egyptian & Levantine":"#5b4cdb","Egyptian & Southern Levantine":"#6553e6","Levantine":"#6553e6","Coptic Egyptian":"#796cf0","Peninsular Arab":"#6c5ce7","North African":"#604ee0","Cypriot":"#3f35cb","Anatolian":"#514bc5","Broadly Western Asian & North African":"#7768eb"}},
+"Sub-Saharan African":{band:"#a25cf5",text:"#ffffff",groups:{"West African":"#643ecc","Nigerian":"#734be0","Senegambian & Guinean":"#643ecc","Ghanaian, Liberian & Sierra Leonean":"#734be0","Congolese & Southern East African":"#643ecc","Angolan & Congolese":"#734be0","Southern East African":"#7a52e5","African Hunter-Gatherer":"#643ecc","Northern East African":"#c53e70","Ethiopian & Eritrean":"#b83368","Sudanese":"#6819d1","Broadly Sub-Saharan African":"#da6972"}},
+"Western Asian & North African":{band:"#a07cf0",text:"#ffffff",groups:{"Northern West Asian":"#443b96","Iranian, Caucasian & Mesopotamian":"#6c59e6","Arab, Egyptian & Levantine":"#5b4cdb","Egyptian & Southern Levantine":"#6553e6","Levantine":"#6553e6","Coptic Egyptian":"#796cf0","Peninsular Arab":"#6c5ce7","North African":"#604ee0","Cypriot":"#3f35cb","Anatolian":"#514bc5","Broadly Western Asian & North African":"#7768eb"}},
 "Melanesian":{band:"#6bd5e8",text:"#173237",groups:{"Melanesian":"#25b8d3"}}
 };
 
-const DEFAULT=[
+const DEFAULT_PROFILE=[
 {top:"Western Asian & North African",group:"Iranian, Caucasian & Mesopotamian",pct:49.3,level:1,regions:[]},
 {top:"East Asian",group:"Manchurian & Mongolian",pct:34.5,level:1,regions:[]},
 {top:"East Asian",group:"Southern Chinese & Taiwanese",pct:7.2,level:1,regions:[]},
@@ -143,8 +170,11 @@ const DEFAULT=[
 {top:"Melanesian",group:"Melanesian",pct:0.5,level:1,regions:[]}
 ];
 
+// STATE MANAGEMENT
+let currentCatalog = JSON.parse(localStorage.getItem('ancestryCatalog')) || structuredClone(DEFAULT_CATALOG);
 let profiles = [];
 let currentProfileIndex = 0;
+let editCat = []; // Temp holder for DB Editor
 
 try {
   const savedProfiles = localStorage.getItem('ancestryProfiles');
@@ -158,11 +188,10 @@ try {
     profiles = [JSON.parse(oldState)];
     localStorage.removeItem('ancestryState');
   } else {
-    profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT)}];
+    profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT_PROFILE)}];
   }
 } catch(e) {
-  console.warn("Failed to load saved state", e);
-  profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT)}];
+  profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT_PROFILE)}];
 }
 
 let state = profiles[currentProfileIndex];
@@ -173,28 +202,31 @@ function saveState() {
 }
 
 function syncInputsToState() {
-  state.name = $('#nameInput').value.trim() || 'Sample User';
-  state.initials = $('#initialsInput').value.trim() || state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
+  state.name = document.querySelector('#nameInput').value.trim() || 'Sample User';
+  state.initials = document.querySelector('#initialsInput').value.trim() || state.name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase();
 }
 
 function updateProfileUI() {
-  $('#profileSelect').innerHTML = profiles.map((p, i) => `<option value="${i}"${i===currentProfileIndex?' selected':''}>${esc(p.name || 'Unnamed Profile')}</option>`).join('');
-  $('#delProfile').disabled = profiles.length <= 1;
-  $('#delProfile').style.opacity = profiles.length <= 1 ? '0.4' : '1';
+  document.querySelector('#profileSelect').innerHTML = profiles.map((p, i) => `<option value="${i}"${i===currentProfileIndex?' selected':''}>${esc(p.name || 'Unnamed Profile')}</option>`).join('');
+  document.querySelector('#delProfile').disabled = profiles.length <= 1;
+  document.querySelector('#delProfile').style.opacity = profiles.length <= 1 ? '0.4' : '1';
 }
 
-const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=n=>`${Number(n||0).toFixed(1)}%`;
 
+// MAIN RENDER ENGINE
 function render(){
- $('#nameOut').textContent=state.name;
+ document.querySelector('#nameOut').textContent=state.name;
  let html='';
  const orderedTops = [...new Set(state.items.map(x=>x.top))];
  
  for(const top of orderedTops){
    const rows = state.items.filter(x=>x.top===top);
    if(!rows.length)continue;
-   const meta = CATALOG[top];
+   
+   // Fallback for missing/deleted DB categories to prevent crashing
+   const meta = currentCatalog[top] || {band:"#cccccc", text:"#000000", groups:{}};
    
    const level1Rows = rows.filter(r => parseInt(r.level, 10) === 1);
    let bandTotal = 0;
@@ -207,7 +239,7 @@ function render(){
 
    html+=`<section draggable="true" data-top="${esc(top)}"><div class="band" style="background:${meta.band};color:${meta.text}"><span class="title">${esc(top)}</span><span class="value">${fmt(bandTotal)}</span></div>`;
    for(const r of rows){
-       const color=meta.groups[r.group]||Object.values(meta.groups)[0];
+       const color = meta.groups[r.group] || meta.band || "#888888";
        
        const chev='<img class="chev" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDE0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjN2M3Y2MiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0xIDFsNiA2LTYgNiIvPjwvc3ZnPg==" alt="">';
        
@@ -225,7 +257,7 @@ function render(){
    }
    html+='</section>'
  }
- $('#results').innerHTML=html;
+ document.querySelector('#results').innerHTML=html;
  renderPie();
 
  document.querySelectorAll('#results section').forEach(sec => {
@@ -269,7 +301,9 @@ function renderPie(){
     if(bandAmt > 0) {
       const dashIn = (cIn * bandAmt) / 100;
       const bleedIn = (bandAmt < 100 && bandAmt > 0) ? 1.2 : 0;
-      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${CATALOG[top].band}" stroke-width="28" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
+      const meta = currentCatalog[top] || {band:"#cccccc", groups:{}};
+      
+      innerPaths += `<circle cx="50" cy="50" r="${rIn}" fill="none" stroke="${meta.band}" stroke-width="28" stroke-dasharray="${dashIn + bleedIn} ${cIn}" stroke-dashoffset="-${offsetIn}"/>`;
       offsetIn += dashIn;
       
       let outerSegments = [];
@@ -290,11 +324,8 @@ function renderPie(){
           
           if (children.length > 0) {
             outerSegments.push(...children);
-            
             let diff = parseFloat(r.pct || 0) - childSum;
-            if (diff > 0.05) {
-              outerSegments.push({ group: r.group, pct: diff });
-            }
+            if (diff > 0.05) outerSegments.push({ group: r.group, pct: diff });
             i = j - 1; 
           } else {
             outerSegments.push(r);
@@ -309,7 +340,7 @@ function renderPie(){
         if(amt > 0) {
           const dashOut = (cOut * amt) / 100;
           const bleedOut = (amt < 100 && amt > 0) ? 1.2 : 0;
-          const color = CATALOG[top].groups[seg.group] || CATALOG[top].band;
+          const color = meta.groups[seg.group] || meta.band;
           outerPaths += `<circle cx="50" cy="50" r="${rOut}" fill="none" stroke="${color}" stroke-width="22" stroke-dasharray="${dashOut + bleedOut} ${cOut}" stroke-dashoffset="-${offsetOut}"/>`;
           offsetOut += dashOut;
         }
@@ -323,13 +354,23 @@ function renderPie(){
   svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="2"/>`;
   svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
 
-  $('#pieSegments').innerHTML = svg;
+  document.querySelector('#pieSegments').innerHTML = svg;
 }
 
+// PROFILE EDITOR LOGIC
 function optionList(obj,selected){return Object.keys(obj).map(v=>`<option${v===selected?' selected':''}>${esc(v)}</option>`).join('')}
 function renderEditor(){
  updateProfileUI();
- $('#nameInput').value=state.name;$('#initialsInput').value=state.initials;$('#editorList').innerHTML=state.items.map((it,i)=>`<div class="editor-card" data-i="${i}" draggable="true"><div class="editor-grid"><label class="field full">Global population<select class="topSel">${optionList(CATALOG,it.top)}</select></label><label class="field full">Population group<select class="groupSel">${optionList(CATALOG[it.top].groups,it.group)}</select></label><label class="field">Percentage<input class="pctInput" type="number" min="0" max="100" step="0.1" value="${it.pct}"></label><label class="field">Hierarchy<select class="levelSel"><option value="1"${parseInt(it.level,10)===1?' selected':''}>Parent row</option><option value="2"${parseInt(it.level,10)===2?' selected':''}>Nested row</option></select></label><label class="field full">Recent regions (optional, one per line)<textarea class="regionsInput">${esc(it.regions.join('\n'))}</textarea></label></div><div class="card-actions"><button class="icon-btn move-up" type="button" ${i===0?'disabled':''}>↑</button><button class="icon-btn move-down" type="button" ${i===state.items.length-1?'disabled':''}>↓</button><button class="remove" type="button">Remove</button></div></div>`).join('');
+ document.querySelector('#nameInput').value=state.name;
+ document.querySelector('#initialsInput').value=state.initials;
+ document.querySelector('#editorList').innerHTML=state.items.map((it,i)=> {
+   const topOptions = optionList(currentCatalog, it.top);
+   const gObj = currentCatalog[it.top] ? currentCatalog[it.top].groups : {};
+   const groupOptions = optionList(gObj, it.group);
+   
+   return `<div class="editor-card" data-i="${i}" draggable="true"><div class="editor-grid"><label class="field full">Global population<select class="topSel">${topOptions}</select></label><label class="field full">Population group<select class="groupSel">${groupOptions}</select></label><label class="field">Percentage<input class="pctInput" type="number" min="0" max="100" step="0.1" value="${it.pct}"></label><label class="field">Hierarchy<select class="levelSel"><option value="1"${parseInt(it.level,10)===1?' selected':''}>Parent row</option><option value="2"${parseInt(it.level,10)===2?' selected':''}>Nested row</option></select></label><label class="field full">Recent regions (optional, one per line)<textarea class="regionsInput">${esc(it.regions.join('\n'))}</textarea></label></div><div class="card-actions"><button class="icon-btn move-up" type="button" ${i===0?'disabled':''}>↑</button><button class="icon-btn move-down" type="button" ${i===state.items.length-1?'disabled':''}>↓</button><button class="remove" type="button">Remove</button></div></div>`
+ }).join('');
+ 
  let dragSrc = null;
  document.querySelectorAll('.editor-card').forEach(card=>{const i=+card.dataset.i;
    card.ondragstart=e=>{dragSrc=i;e.dataTransfer.effectAllowed='move';card.style.opacity='0.4'};
@@ -338,14 +379,19 @@ function renderEditor(){
    card.ondragleave=e=>{card.classList.remove('over')};
    card.ondrop=e=>{e.stopPropagation();if(dragSrc!==null&&dragSrc!==i){const moved=state.items.splice(dragSrc,1)[0];state.items.splice(i,0,moved);renderEditor()}return false};
    card.ondragend=e=>{card.style.opacity='1';document.querySelectorAll('.editor-card').forEach(c=>c.classList.remove('over'))};
-   card.querySelector('.topSel').onchange=e=>{state.items[i].top=e.target.value;state.items[i].group=Object.keys(CATALOG[e.target.value].groups)[0];renderEditor()};card.querySelector('.groupSel').onchange=e=>state.items[i].group=e.target.value;card.querySelector('.pctInput').oninput=e=>state.items[i].pct=Number(e.target.value);card.querySelector('.levelSel').onchange=e=>state.items[i].level=Number(e.target.value);card.querySelector('.regionsInput').oninput=e=>state.items[i].regions=e.target.value.split(/\n/).map(x=>x.trim()).filter(Boolean);
+   card.querySelector('.topSel').onchange=e=>{state.items[i].top=e.target.value;state.items[i].group=Object.keys(currentCatalog[e.target.value].groups)[0]||'';renderEditor()};
+   card.querySelector('.groupSel').onchange=e=>state.items[i].group=e.target.value;
+   card.querySelector('.pctInput').oninput=e=>state.items[i].pct=Number(e.target.value);
+   card.querySelector('.levelSel').onchange=e=>state.items[i].level=Number(e.target.value);
+   card.querySelector('.regionsInput').oninput=e=>state.items[i].regions=e.target.value.split(/\n/).map(x=>x.trim()).filter(Boolean);
    if(card.querySelector('.move-up')) card.querySelector('.move-up').onclick=()=>{ [state.items[i-1], state.items[i]] = [state.items[i], state.items[i-1]]; renderEditor(); };
    if(card.querySelector('.move-down')) card.querySelector('.move-down').onclick=()=>{ [state.items[i], state.items[i+1]] = [state.items[i+1], state.items[i]]; renderEditor(); };
    card.querySelector('.remove').onclick=()=>{state.items.splice(i,1);renderEditor()}
  })
 }
 
-$('#profileSelect').onchange = (e) => {
+// PROFILE EVENT LISTENERS
+document.querySelector('#profileSelect').onchange = (e) => {
   syncInputsToState();
   currentProfileIndex = Number(e.target.value);
   state = profiles[currentProfileIndex];
@@ -354,7 +400,7 @@ $('#profileSelect').onchange = (e) => {
   render();
 };
 
-$('#newProfile').onclick = () => {
+document.querySelector('#newProfile').onclick = () => {
   syncInputsToState();
   profiles.push({name: "New Profile", initials: "NP", items: []});
   currentProfileIndex = profiles.length - 1;
@@ -364,7 +410,7 @@ $('#newProfile').onclick = () => {
   render();
 };
 
-$('#dupProfile').onclick = () => {
+document.querySelector('#dupProfile').onclick = () => {
   syncInputsToState();
   let copy = structuredClone(state);
   copy.name += " (Copy)";
@@ -376,7 +422,7 @@ $('#dupProfile').onclick = () => {
   render();
 };
 
-$('#delProfile').onclick = () => {
+document.querySelector('#delProfile').onclick = () => {
   if (profiles.length > 1) {
     if (confirm("Are you sure you want to delete this profile? This cannot be undone.")) {
       profiles.splice(currentProfileIndex, 1);
@@ -389,53 +435,38 @@ $('#delProfile').onclick = () => {
   }
 };
 
-$('#results').onclick = (e) => { 
+document.querySelector('#results').onclick = (e) => { 
   if (e.defaultPrevented) return;
   renderEditor(); 
-  $('#panel').classList.add('open'); 
+  document.querySelector('#panel').classList.add('open'); 
 };
 
-$('#openPanel').onclick=()=>{renderEditor();$('#panel').classList.add('open')};
-
-$('#addGroup').onclick=()=>{
-  let top = Object.keys(CATALOG)[0];
+document.querySelector('#addGroup').onclick=()=>{
+  let top = Object.keys(currentCatalog)[0];
   if (state.items.length > 0) {
       top = state.items[state.items.length - 1].top;
   }
-  state.items.push({top, group:Object.keys(CATALOG[top].groups)[0], pct:0, level:1, regions:[]});
+  state.items.push({top, group:Object.keys(currentCatalog[top].groups)[0]||'', pct:0, level:1, regions:[]});
   renderEditor();
 };
 
-$('#close').onclick=()=>$('#panel').classList.remove('open');
+document.querySelector('#close').onclick=()=>document.querySelector('#panel').classList.remove('open');
 
-$('#apply').onclick=()=>{
+document.querySelector('#apply').onclick=()=>{
   syncInputsToState();
   saveState();
   render();
-  $('#panel').classList.remove('open');
+  document.querySelector('#panel').classList.remove('open');
 };
 
-$('#downloadBtn').onclick = async () => {
-  $('.prototype-mark').style.display = 'none';
-  
-  const canvas = await html2canvas($('#captureTarget'), { 
-    scale: 4, 
-    useCORS: true, 
-    backgroundColor: '#fff'
-  });
-  
-  $('.prototype-mark').style.display = 'block';
-  
+document.querySelector('#downloadBtn').onclick = async () => {
+  document.querySelector('.prototype-mark').style.display = 'none';
+  const canvas = await html2canvas(document.querySelector('#captureTarget'), { scale: 4, useCORS: true, backgroundColor: '#fff' });
+  document.querySelector('.prototype-mark').style.display = 'block';
   canvas.toBlob(async (blob) => {
     if (navigator.share) {
       const file = new File([blob], 'Ancestry-Composition.jpg', { type: 'image/jpeg' });
-      try {
-        await navigator.share({
-          files: [file],
-          title: 'Ancestry Composition',
-        });
-      } catch (err) {
-      }
+      try { await navigator.share({ files: [file], title: 'Ancestry Composition' }); } catch (err) {}
     } else {
       const link = document.createElement('a');
       link.download = 'Ancestry-Composition.jpg';
@@ -444,6 +475,106 @@ $('#downloadBtn').onclick = async () => {
     }
   }, 'image/jpeg', 1.0);
 };
+
+// ==========================================
+// DATABASE EDITOR LOGIC
+// ==========================================
+
+function catToEditArr(cat) {
+  return Object.keys(cat).map(k => ({
+    name: k, band: cat[k].band, text: cat[k].text,
+    groups: Object.keys(cat[k].groups).map(g => ({ name: g, color: cat[k].groups[g] }))
+  }));
+}
+
+function editArrToCat(arr) {
+  let out = {};
+  arr.forEach(r => {
+    if(!r.name.trim()) return;
+    let gOut = {};
+    r.groups.forEach(g => { if(g.name.trim()) gOut[g.name.trim()] = g.color; });
+    out[r.name.trim()] = { band: r.band, text: r.text, groups: gOut };
+  });
+  return out;
+}
+
+function renderDb() {
+  document.querySelector('#dbList').innerHTML = editCat.map((reg, r) => `
+    <details class="db-region">
+      <summary class="db-summary">${esc(reg.name) || 'Unnamed Region'} (✏️ Click to edit)</summary>
+      <div class="db-content">
+        <div style="display:flex; gap:6px; margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #cfcfd4;">
+          <input value="${esc(reg.name)}" class="r-name" data-r="${r}" style="flex:1; border:1px solid #cfcfd4; border-radius:6px; padding:6px;" placeholder="Region Name">
+          <input type="color" value="${reg.band}" class="r-band color-swatch" data-r="${r}" style="width:36px" title="Band Color">
+          <input type="color" value="${reg.text}" class="r-text color-swatch" data-r="${r}" style="width:36px" title="Text Color">
+          <button type="button" class="del-r remove" data-r="${r}" style="padding:6px 10px; border-radius:6px;">X</button>
+        </div>
+        ${reg.groups.map((grp, g) => `
+          <div class="db-row">
+             <input value="${esc(grp.name)}" class="g-name" data-r="${r}" data-g="${g}" style="border:1px solid #cfcfd4; border-radius:6px; padding:6px;" placeholder="Group Name">
+             <input type="color" value="${grp.color}" class="g-color color-swatch" data-r="${r}" data-g="${g}">
+             <button type="button" class="del-g remove" data-r="${r}" data-g="${g}" style="padding:6px 10px; border-radius:6px;">X</button>
+          </div>
+        `).join('')}
+        <button type="button" class="add-g add-btn" data-r="${r}">+ Add Group</button>
+      </div>
+    </details>
+  `).join('');
+}
+
+document.querySelector('#openDbBtn').onclick = () => {
+  editCat = catToEditArr(currentCatalog);
+  renderDb();
+  document.querySelector('#panelTitle').textContent = "Database Editor";
+  document.querySelector('#profileEditorView').style.display = 'none';
+  document.querySelector('#dbEditorView').style.display = 'block';
+};
+
+document.querySelector('#saveDbBtn').onclick = () => {
+  currentCatalog = editArrToCat(editCat);
+  localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
+  document.querySelector('#panelTitle').textContent = "Customize ancestry results";
+  document.querySelector('#dbEditorView').style.display = 'none';
+  document.querySelector('#profileEditorView').style.display = 'block';
+  renderEditor();
+  render();
+};
+
+document.querySelector('#resetDbBtn').onclick = () => {
+  if (confirm("Reset the entire population database to 23andMe defaults? All custom regions and colors will be lost.")) {
+    currentCatalog = structuredClone(DEFAULT_CATALOG);
+    editCat = catToEditArr(currentCatalog);
+    renderDb();
+  }
+};
+
+document.querySelector('#addDbRegion').onclick = () => {
+  editCat.push({name: 'New Broad Region', band: '#cccccc', text: '#000000', groups: [{name: 'New Group', color: '#888888'}]});
+  renderDb();
+};
+
+// Event Delegation for DB Editor inputs and buttons
+document.querySelector('#dbList').addEventListener('change', (e) => {
+  const trg = e.target;
+  const r = trg.dataset.r, g = trg.dataset.g;
+  if (trg.classList.contains('r-name')) editCat[r].name = trg.value;
+  if (trg.classList.contains('r-band')) editCat[r].band = trg.value;
+  if (trg.classList.contains('r-text')) editCat[r].text = trg.value;
+  if (trg.classList.contains('g-name')) editCat[r].groups[g].name = trg.value;
+  if (trg.classList.contains('g-color')) editCat[r].groups[g].color = trg.value;
+});
+
+document.querySelector('#dbList').addEventListener('click', (e) => {
+  const trg = e.target;
+  const r = trg.dataset.r, g = trg.dataset.g;
+  if (trg.classList.contains('del-r')) {
+    if(confirm("Delete this broad region and all its sub-groups?")) { editCat.splice(r, 1); renderDb(); }
+  } else if (trg.classList.contains('del-g')) {
+    editCat[r].groups.splice(g, 1); renderDb();
+  } else if (trg.classList.contains('add-g')) {
+    editCat[r].groups.push({name: 'New Group', color: '#888888'}); renderDb();
+  }
+});
 
 render();
 </script></body></html>
