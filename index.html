@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Ancestry Composition</title>
+<title>Ancestry Composition — Research Prototype</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{--ink:#000;--hair:#e7e7e9;--chev:#c8c8ca;--value-right:38px;--chevron-right:12px}
@@ -41,6 +41,7 @@ body{display:flex;justify-content:center}
 .places{padding:8px 0 0 29px;font-size:13px;line-height:1.5;letter-spacing:-.1px;color:#1c1c1e;font-weight:400}
 .places p{margin:0 0 10px;word-spacing:-0.5px}.places p:last-child{margin-bottom:0}.places strong{font-weight:600}
 
+.prototype-mark{position:fixed;z-index:20;right:8px;bottom:8px;border:0;border-radius:999px;background:rgba(20,20,22,.92);color:#fff;padding:7px 10px;font-size:9px;font-weight:700;letter-spacing:.04em;box-shadow:0 2px 8px rgba(0,0,0,.22)}
 .panel{position:fixed;z-index:30;inset:8px;max-width:520px;margin:auto;background:#f7f7f9;border:1px solid #d4d4d8;border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.28);display:none;overflow:hidden}.panel.open{display:flex;flex-direction:column}.panel-head{padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}.panel-head h2{font-size:18px;margin:0}.panel-head button{border:0;background:#ececef;border-radius:9px;padding:7px 11px;font-weight:700;cursor:pointer}.panel-body{padding:12px;overflow:auto}.identity{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:12px}.field{display:grid;gap:4px;font-size:11px;color:#5c5c62}.field input,.field select,.field textarea{width:100%;border:1px solid #cfcfd4;border-radius:9px;background:#fff;padding:9px;font:inherit;color:#111}.field textarea{resize:vertical;min-height:58px}.editor-list{display:grid;gap:10px}.editor-card{background:#fff;border:1px solid #d8d8dc;border-radius:13px;padding:10px}.editor-grid{display:grid;grid-template-columns:1.4fr .7fr;gap:8px}.editor-grid .full{grid-column:1/-1}.card-actions{display:flex;gap:7px;margin-top:8px}.card-actions button,.add-btn,.apply-btn{border:0;border-radius:9px;padding:9px 10px;font-weight:700;cursor:pointer}.remove{background:#f2e7e7;color:#8a2525;flex:1}.icon-btn{background:#e9e9ed;color:#111;width:38px}.icon-btn:disabled{opacity:0.4;cursor:default}.add-btn{width:100%;margin-top:10px;background:#e9e9ed}.apply-btn{width:100%;margin-top:10px;background:#171719;color:#fff}.hint{font-size:10px;line-height:1.35;color:#666;margin:9px 2px 0}
 #results section {cursor: grab; transition: opacity 0.2s ease;}
 #results section:active {cursor: grabbing;}
@@ -86,7 +87,16 @@ body{display:flex;justify-content:center}
       <button class="icon-btn" id="openDbBtn" type="button" style="width:100%; margin-bottom:14px; background:#d7d7dc;">⚙️ Manage Populations & Colors</button>
       <hr style="border:0;border-top:1px solid #d8d8dc;margin:0 -12px 14px">
 
-      <div class="identity"><label class="field">Display name<input id="nameInput"></label><label class="field">Initials<input id="initialsInput" maxlength="3"></label></div>
+      <div class="identity">
+        <label class="field">Display name<input id="nameInput"></label>
+        <label class="field">Initials<input id="initialsInput" maxlength="3"></label>
+        <div class="field full" style="grid-column: 1 / -1; display: flex; gap: 8px; align-items: flex-end; margin-top: 4px;">
+            <label class="field" style="flex:1;">Profile Photo (Optional)
+              <input type="file" id="avatarInput" accept="image/jpeg, image/png, image/webp" style="padding:6px; cursor:pointer;">
+            </label>
+            <button type="button" id="removeAvatarBtn" class="remove" style="padding: 8px 12px; height: 33px; border-radius: 9px; display: none;">Remove</button>
+        </div>
+      </div>
       <div id="editorList" class="editor-list"></div>
       <button class="add-btn" id="addGroup">+ Add ancestry group</button>
       <button class="apply-btn" id="apply">Apply changes</button>
@@ -175,15 +185,20 @@ let editCat = [];
 
 try {
   const savedProfiles = localStorage.getItem('ancestryProfiles');
+  const oldState = localStorage.getItem('ancestryState'); 
+  
   if (savedProfiles) {
     profiles = JSON.parse(savedProfiles);
     currentProfileIndex = parseInt(localStorage.getItem('ancestryCurrentIndex') || '0', 10);
     if (currentProfileIndex >= profiles.length || isNaN(currentProfileIndex)) currentProfileIndex = 0;
+  } else if (oldState) {
+    profiles = [JSON.parse(oldState)];
+    localStorage.removeItem('ancestryState');
   } else {
-    profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT_PROFILE)}];
+    profiles = [{name:"Alex Miller", initials:"AM", avatar: null, items:structuredClone(DEFAULT_PROFILE)}];
   }
 } catch(e) {
-  profiles = [{name:"Alex Miller", initials:"AM", items:structuredClone(DEFAULT_PROFILE)}];
+  profiles = [{name:"Alex Miller", initials:"AM", avatar: null, items:structuredClone(DEFAULT_PROFILE)}];
 }
 
 let state = profiles[currentProfileIndex];
@@ -202,6 +217,7 @@ function updateProfileUI() {
   document.querySelector('#profileSelect').innerHTML = profiles.map((p, i) => `<option value="${i}"${i===currentProfileIndex?' selected':''}>${esc(p.name || 'Unnamed Profile')}</option>`).join('');
   document.querySelector('#delProfile').disabled = profiles.length <= 1;
   document.querySelector('#delProfile').style.opacity = profiles.length <= 1 ? '0.4' : '1';
+  document.querySelector('#removeAvatarBtn').style.display = state.avatar ? 'block' : 'none';
 }
 
 const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -338,10 +354,17 @@ function renderPie(){
   }
 
   let svg = '';
+  svg += `<defs><clipPath id="avatarClip"><circle cx="50" cy="50" r="18"/></clipPath></defs>`;
   svg += `<circle cx="50" cy="50" r="48.5" fill="#fff"/>`;
   svg += `<g transform="rotate(-90 50 50)">${innerPaths}${outerPaths}</g>`;
-  svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="2"/>`;
-  svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
+  
+  if (state.avatar) {
+    svg += `<image href="${state.avatar}" x="32" y="32" width="36" height="36" clip-path="url(#avatarClip)" preserveAspectRatio="xMidYMid slice" />`;
+    svg += `<circle cx="50" cy="50" r="18" fill="none" stroke="#fff" stroke-width="2"/>`;
+  } else {
+    svg += `<circle cx="50" cy="50" r="18" fill="#ebebeb" stroke="#fff" stroke-width="2"/>`;
+    svg += `<text id="initials" x="50" y="56" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif" font-weight="400" font-size="17.5" fill="#606060" letter-spacing="0.2">${state.initials}</text>`;
+  }
 
   document.querySelector('#pieSegments').innerHTML = svg;
 }
@@ -379,6 +402,41 @@ function renderEditor(){
  })
 }
 
+// PROFILE AVATAR LOGIC
+document.querySelector('#avatarInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+     const img = new Image();
+     img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 150; 
+        canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+        const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+        const x = (canvas.width - img.width * scale) / 2;
+        const y = (canvas.height - img.height * scale) / 2;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        
+        state.avatar = canvas.toDataURL('image/jpeg', 0.9);
+        saveState();
+        renderEditor();
+        render();
+     };
+     img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.querySelector('#removeAvatarBtn').onclick = () => {
+  state.avatar = null;
+  document.querySelector('#avatarInput').value = '';
+  saveState();
+  renderEditor();
+  render();
+};
+
 document.querySelector('#profileSelect').onchange = (e) => {
   syncInputsToState();
   currentProfileIndex = Number(e.target.value);
@@ -390,7 +448,7 @@ document.querySelector('#profileSelect').onchange = (e) => {
 
 document.querySelector('#newProfile').onclick = () => {
   syncInputsToState();
-  profiles.push({name: "New Profile", initials: "NP", items: []});
+  profiles.push({name: "New Profile", initials: "NP", avatar: null, items: []});
   currentProfileIndex = profiles.length - 1;
   state = profiles[currentProfileIndex];
   saveState();
@@ -429,7 +487,6 @@ const openPanelHandler = (e) => {
   document.querySelector('#panel').classList.add('open'); 
 };
 
-// Opening panel by clicking either the results block or the profile header area
 document.querySelector('#results').onclick = openPanelHandler;
 document.querySelector('#profileArea').onclick = openPanelHandler;
 
@@ -567,7 +624,6 @@ document.querySelector('#addDbRegion').onclick = () => {
   renderDb();
 };
 
-// LIVE REACTIVE UPDATE ENGINE
 document.querySelector('#dbList').addEventListener('input', (e) => {
   const trg = e.target;
   const r = trg.dataset.r, g = trg.dataset.g;
@@ -591,7 +647,6 @@ document.querySelector('#dbList').addEventListener('input', (e) => {
      trg.previousElementSibling.style.background = trg.value;
   }
   
-  // Rebuild catalog and instantly update the live chart preview
   currentCatalog = editArrToCat(editCat);
   localStorage.setItem('ancestryCatalog', JSON.stringify(currentCatalog));
   render(); 
